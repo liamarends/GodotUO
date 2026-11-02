@@ -1,5 +1,10 @@
 # GodotUO
 
+This is **liamarends' fork** of [DatMoshu/GodotUO](https://github.com/DatMoshu/GodotUO).
+For the adapted agents, Codex/Claude skill setup and development workflow, start
+with the [fork workflow guide](docs/fork-workflow.md). The documentation below
+describes the inherited client; upstream links retain their original attribution.
+
 <p align="center">
   <img src="godot/GUO/assets/brand/splash_sigil.png" alt="GodotUO — the Ultima Online ankh sigil from the GUO splash screen" width="320" />
 </p>

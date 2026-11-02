@@ -24,6 +24,8 @@ concurrency:
 
 jobs:
   build:
+    # Configure Pages first; forks do not inherit a working Pages deployment.
+    if: vars.GUO_ENABLE_PAGES == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

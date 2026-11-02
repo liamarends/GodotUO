@@ -10,6 +10,31 @@ binds to FNA.
 Read `docs/port_plan.md` before doing port work. It is short and it explains
 why the project is structured the way it is.
 
+## Fork working agreement
+
+This checkout belongs to **liamarends/GodotUO**. DatMoshu/GodotUO is the
+upstream reference; preserve its licences, attribution and accepted port
+architecture. Fork decisions and review ownership belong to liamarends.
+Target branches and PRs at this fork unless the user requests an upstream submission.
+
+Read `docs/fork-workflow.md` for setup and verification, and
+`.claude/docs/coordination-rules.md` before applying inherited roles or skills.
+These fork rules take precedence over generic studio instructions:
+
+- A scoped implementation request includes necessary local edits and checks;
+  do not ask permission again for every file. Respect review-only requests.
+- Work in one session unless delegation is explicitly requested. Role files
+  provide expertise; Claude Task/model/memory metadata is not Codex configuration.
+- Use the actual code and accepted ADRs. Missing optional GDD/sprint/template
+  scaffolding does not block an otherwise specified task.
+- Generic style rules never authorize gratuitous rewrites of ported code.
+- Do not claim a test run, independent review or maintainer sign-off that did not occur.
+
+For onboarding, read `.claude/skills/guo-workflow/SKILL.md`. Skill discovery
+can be configured with `python tools/agent_skills/run.py` without the engine
+or game data; verify with `--check`. The helper's skill link is the sole
+intentional directory-link setup; do not create engine/upstream worktree links.
+
 ---
 
 ## Technology stack
@@ -213,7 +238,7 @@ existing authoring in the client is migration work, not a precedent for new code
 | Tools | `tools/<job>/` | Existing launcher-pair, configuration, documentation and privacy rules. |
 
 1. A new chat command, profile field, Options entry, shader or ported-file edit
-   starts with a Discussion or short ADR decided by Moshu. Ask whether ClassicUO
+   starts with a short ADR or recorded decision by liamarends. Ask whether ClassicUO
    would ship it; if not, it belongs in L2–L4 rather than the core/client option.
 2. One feature per PR, with a soft ceiling of about 1,500 lines or 20 files unless
    agreed beforehand. Split larger changes before review, preserving authorship.
@@ -247,7 +272,7 @@ which imports it. Every agent follows the same rules, skills and roles.
 |---|---|
 | Claude Code | `.claude/skills/`, natively |
 | GitHub Copilot, Cursor | `.claude/skills/`, natively |
-| Codex | `.agents/skills/`: run `launchers\dev\agent_skills.bat` once per checkout; it links the folder to `.claude/skills/` (gitignored) |
+| Codex | `.agents/skills/`: run `python tools/agent_skills/run.py` once per checkout; it links the folder to `.claude/skills/` (gitignored) |
 
 When a task matches a skill's `description`, read that `SKILL.md` and follow
 it, whichever tool you are. Skills name Claude Code tools (Task, AskUserQuestion,
@@ -298,8 +323,9 @@ agent can run it.
 
 ## Evidence
 
-Agents save evidence (screenshots, recordings, logs of a run) in the shared agent area, under
-`_agentShared/runs/<project>/<run-id>/`, never in this repo or a worktree; run-id is
-`<YYYYMMDD>_<seat-or-story>_<topic>` (UTC, lower-case kebab). The fleet's evidence tool starts the folder and names
-the files; the naming and retention rules live beside it in `_agentShared/rules/`. Product source assets and test
-fixtures keep their own paths.
+Save generated evidence (screenshots, recordings, run logs) under the externally
+configured `UO_BUILD_DIR/runs/<run-id>/`, never in the checkout or a worktree.
+Use a descriptive date/task run ID. No upstream `_agentShared` folder or fleet
+tool is required. Keep concise handoffs in gitignored
+`production/session-state/active.md` when useful. Product assets and test
+fixtures retain their own paths. Review all evidence for private data before sharing.
