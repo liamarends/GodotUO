@@ -1,96 +1,25 @@
-# Technical Preferences — liamarends/GodotUO
+# Technical preferences — Roblox Studio
 
-Verified against the project files at fork baseline
-`1c80eca2b8dd97e3734f18783b0402cad1cfdc0c`. Read current project files when pins change.
-This is an existing ClassicUO port, not an unconfigured game template.
-
-## Engine & Language
-
-- **Engine**: Godot 4.7.2 .NET; pin in `launchers/_shared/config.bat`.
-- **Language**: C#; desktop net8.0, Android and community web net9.0
-  in `godot/GUO/GUO.csproj`. Python 3.12+ for tools.
-- **Rendering**: Godot-hosted ClassicUO rendering; production Depth World with
-  canvas recovery. Preserve nearest-neighbour native art. Consult the applicable
-  rendering ADR before changing semantics.
-- **Physics**: Preserve ClassicUO movement/collision rules; do not introduce
-  Godot physics to replace them as incidental cleanup.
-
-## Input & Platform
-
-- **Target Platforms**: Windows first; Linux/Steam Deck, Android ARM64 and
-  community-engine web have separate export paths and verification requirements.
-- **Input Methods**: Keyboard/mouse, controller and touch.
-- **Primary Input**: Desktop keyboard/mouse; preserve current input-mode switching.
-- **Gamepad Support**: Existing implementation; consult ADR-0025 and ADR-0040.
-- **Touch Support**: Existing implementation; verify affected behavior on a device.
-- **Platform Notes**: Exportability is not proof of gameplay or device support.
-  Official Godot web builds are not the project's C# web target.
-
-## Naming Conventions
-
-For ported files, preserve upstream names, layout, APIs and copyright headers.
-For GUO-owned code, follow neighboring files: C# PascalCase types/methods,
-existing member conventions, Python snake_case modules/functions. Do not rename
-ported events, signals, files, scenes or constants to satisfy generic templates.
-
-## Performance Budgets
-
-- **Target Framerate / Frame Budget / Memory Ceiling**: No new global numeric
-  target is established by this fork. Use the applicable ADR and measured baseline.
-- **Draw Calls**: Existing perf gate allows at most +5% per comparable scene;
-  batcher items may not increase. Frame-time results are advisory.
-- Read `tools/perf_probe/README.md` for valid measurement conditions.
-  Synthetic CI results do not establish runtime performance.
-
-## Testing
-
-- **Framework**: Python pytest and standalone scripts under `tools/`;
-  engine-free C# test projects and Godot probes listed in CI and smoke launchers.
-- **Minimum Coverage**: No invented percentage; verify changed behavior and
-  relevant regressions with the existing test harness.
-- **Required Tests**: Use the applicable commands from `docs/fork-workflow.md`.
-  Never scaffold a second GDScript test framework for this C# port by default.
-
-## Forbidden Patterns
-
-The L0–L4 boundaries in `AGENTS.md` govern. In particular: no edits under
-`sources/`, engine behavior in Compat, unmarked port drift, client-side
-generation services, exported editor/Labs code, or committed proprietary data.
-
-## Allowed Libraries / Addons
-
-Use dependencies already declared in project files and existing tooling.
-A template's empty dependency list is not permission to replace the stack.
-
-## Architecture Decisions Log
-
-Existing decisions live in `docs/architecture/`; consult its README and the
-actual ADR status. Do not bootstrap a competing architecture or infer approval
-from an index entry alone.
-
-## Engine Specialists
-
-These names refer to role files in `.claude/agents/`, not guaranteed runtime
-subagents. Apply them in the current session unless delegation is authorized.
-
-- **Primary**: godot-specialist
-- **Language/Code Specialist**: godot-csharp-specialist
-- **Shader Specialist**: godot-shader-specialist
-- **UI Specialist**: ui-programmer
-- **Additional Specialists**: uo-port-strategist, fna-migration-specialist,
-  uo-fileformat-engineer, uo-network-engineer, uo-render-engineer,
-  uo-editor-engineer, mobile-web-engineer
-- **Routing Notes**: GUO port constraints take precedence over generic style advice.
-
-### File Extension Routing
-
-| File / area | Role |
-|---|---|
-| C# game code | godot-csharp-specialist plus the relevant UO specialist |
-| Render, shaders, input or audio | uo-render-engineer; godot-shader-specialist for shaders |
-| Game UI and gumps | ui-programmer |
-| Godot scenes and lifecycle | godot-specialist |
-| Editor add-on and authoring | uo-editor-engineer |
-| Python tools | tools-programmer |
-| Android and web exports | mobile-web-engineer |
-| Architecture review | lead-programmer |
+- **Engine**: Roblox Studio. Studio updates separately; record its version in test evidence.
+- **Language**: Luau with strict type checking for new code.
+- **Source**: roblox/src/server, client and shared; service mapping in roblox/default.project.json.
+- **Sync/build**: Rojo 7.7.1, optional Studio plugin from the same release.
+- **Formatter**: StyLua 2.6.0 with Luau syntax, roblox/stylua.toml.
+- **Version source**: roblox/tool-versions.json; update its versions/digests and CI together.
+- **Physics/rendering**: Roblox engine services and Instances; no Godot shaders or .NET runtime.
+- **Input**: Design for keyboard/mouse and touch; verify gamepad if included by the feature.
+  No claim of device support until tested.
+- **Authority**: Server owns shared game rules and saved state. Shared modules are client-readable.
+- **Persistence**: No persistence library or datastore schema selected by this starter.
+  Add only when needed; isolate test experience data from live data.
+- **Dependencies**: No gameplay framework selected. Do not add Knit, networking wrappers
+  or a datastore package merely to satisfy a template.
+- **Naming**: PascalCase ModuleScript names; descriptive camelCase locals/functions;
+  Rojo .server.luau / .client.luau entry points; existing public APIs take precedence.
+- **Performance**: Measure before assigning budgets. Test client and server costs separately,
+  including low-end/mobile targets when in scope. No invented FPS or memory claims.
+- **Testing**: Script Analysis, Test, Server & Clients, device emulation;
+  targeted automated tests when a runner exists. CI currently checks setup/format/build only.
+- **Specialists**: roblox-studio-specialist, roblox-server-engineer,
+  roblox-client-ui-engineer, roblox-qa and lead-programmer.
+- **Documentation**: docs/roblox-workflow.md. Historical Godot ADRs do not govern Roblox design.

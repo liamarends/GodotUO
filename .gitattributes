@@ -18,6 +18,10 @@
 *.yml  text eol=lf
 *.yaml text eol=lf
 
+# Roblox source: match StyLua on Windows and Linux.
+*.lua  text eol=lf
+*.luau text eol=lf
+
 # Godot project files.
 *.godot   text eol=lf
 *.tscn    text eol=lf

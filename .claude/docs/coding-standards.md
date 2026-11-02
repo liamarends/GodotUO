@@ -1,41 +1,18 @@
-# Coding and verification standards
+# Roblox coding standards
 
-## ClassicUO port
+Use Luau and Roblox services. Keep authoritative state and persistence on the server.
+Validate and rate-limit client-triggered actions at the server boundary.
+ReplicatedStorage holds public shared modules, not secrets.
 
-`AGENTS.md` and the governing ADR define the port contract. Keep upstream
-structure and behavior, including naming, static APIs and allocation patterns,
-unless the task explicitly changes them. Mark unavoidable deviations with
-`PORT DEVIATION (GUO)`. Do not apply generic line-length, method-size,
-dependency-injection or documentation rewrites to ported code.
+Use --!strict and useful exported types; narrow untrusted values before use.
+Follow the current code's module style without imposing a framework.
+Make initialization order explicit; avoid dependency cycles and indefinite waits
+for objects that may never replicate. Clean connections/resources up on lifecycle changes.
 
-## GUO-owned code and tools
+Test the behavior and relevant failures, not assertion counts or method lengths.
+Format with the pinned StyLua. Use Studio Script Analysis for Roblox-aware diagnostics.
+A Rojo build only checks assembly of the place; do not call it a gameplay test.
 
-Follow the surrounding code and document non-obvious contracts. Keep runtime,
-editor, packs and Labs in their defined layers. Share Python configuration
-through `tools/guo`; new launchers need .bat/.sh pairs. Personal paths and
-credentials belong only in local configuration.
-
-Use Conventional Commits. Reference a real story or ADR when one applies;
-do not fabricate IDs to satisfy a template.
-
-## Design and architecture
-
-Use existing design documents and accepted ADRs. New mechanics may use the
-studio templates when useful. A small repair, tooling change or documentation
-edit does not require inventing a GDD, TR registry entry or sprint first.
-Record meaningful architectural changes in the existing ADR structure.
-
-## Verification
-
-Use the repository's actual Python tests, C# test programs, Godot probes and
-launchers. See `docs/fork-workflow.md` for the command matrix.
-
-- Test observable behavior and failure cases; use focused regression tests for fixes.
-- Follow the existing test suite's naming and fixtures. Temporary filesystem
-  integration tests and fixed random seeds are valid when isolated and reproducible.
-- Judge assertions by what they prove, not how many there are.
-- Visual changes need relevant visual evidence; a headless success cannot prove
-  rendering parity or input feel. Do not invent a playtest or sign-off.
-- Record failed and unavailable checks separately from passed checks.
-- Hosted tests use synthetic data; users supply legally obtained UO data for live tests.
-- Keep required checks enabled. Do not weaken tests to hide failures.
+Use Conventional Commits. Link real task/design decisions when they exist;
+small changes do not require creating a studio planning hierarchy.
+Preserve licences and asset provenance. Read AGENTS.md for authority and release scope.

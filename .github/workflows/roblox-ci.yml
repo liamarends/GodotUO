@@ -1,0 +1,57 @@
+name: roblox-ci
+
+on:
+  push:
+    branches: [main, "work/**"]
+    paths: ["roblox/**", ".github/workflows/roblox-ci.yml"]
+  pull_request:
+    paths: ["roblox/**", ".github/workflows/roblox-ci.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: roblox-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned tools with archive verification
+        run: |
+          $pins = Get-Content roblox/tool-versions.json -Raw | ConvertFrom-Json
+          $platformKey = if ($env:RUNNER_OS -eq 'Windows') { 'windows' } else { 'linux' }
+          foreach ($toolName in @('rojo', 'stylua')) {
+            $asset = $pins.$toolName.$platformKey
+            $archive = Join-Path $env:RUNNER_TEMP "$toolName.zip"
+            $toolDir = Join-Path $env:RUNNER_TEMP $toolName
+            Invoke-WebRequest -Uri $asset.url -OutFile $archive
+            if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $asset.sha256) {
+              throw "$toolName archive checksum mismatch"
+            }
+            Expand-Archive -LiteralPath $archive -DestinationPath $toolDir
+            if ($env:RUNNER_OS -ne 'Windows') {
+              & chmod +x (Join-Path $toolDir $toolName)
+              if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            }
+            $toolDir >> $env:GITHUB_PATH
+          }
+      - name: Check Luau formatting
+        run: stylua --check --config-path roblox/stylua.toml roblox/src
+      - name: Build local Roblox place
+        run: |
+          New-Item -ItemType Directory -Force build | Out-Null
+          rojo build roblox/default.project.json -o build/roblox-starter.rbxlx
+      - name: Explain verification boundary
+        run: |
+          "Formatting and Rojo assembly passed. Studio Script Analysis, playtests and multiplayer checks are still required." >> $env:GITHUB_STEP_SUMMARY

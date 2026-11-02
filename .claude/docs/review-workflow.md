@@ -1,6 +1,7 @@
-# Review Workflow
+# Roblox review workflow
 
-1. Code changes require review by the relevant department lead agent
-2. Design changes require sign-off from `game-designer` and `creative-director`
-3. Architecture changes require sign-off from `technical-director`
-4. Cross-domain changes require sign-off from `producer`
+Review acceptance criteria, server/client placement, remote validation,
+persistence failures, lifecycle cleanup and the evidence relevant to the change.
+Use the appropriate role in the current session; separate actual bugs from questions.
+Record unrun Studio checks. Maintainer review and publication remain distinct from
+an agent's self-review. No ceremonial director sign-offs are required.

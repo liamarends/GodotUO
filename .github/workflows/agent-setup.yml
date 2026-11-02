@@ -9,6 +9,8 @@ on:
       - ".claude/**"
       - "tools/agent_skills/**"
       - "docs/fork-workflow.md"
+      - "docs/roblox-workflow.md"
+      - "README.md"
       - ".github/workflows/agent-setup.yml"
   pull_request:
     paths:
@@ -17,6 +19,8 @@ on:
       - ".claude/**"
       - "tools/agent_skills/**"
       - "docs/fork-workflow.md"
+      - "docs/roblox-workflow.md"
+      - "README.md"
       - ".github/workflows/agent-setup.yml"
   workflow_dispatch:
 
@@ -48,4 +52,4 @@ jobs:
           python tools/agent_skills/run.py
           python tools/agent_skills/run.py --check
       - name: Check fork documentation links
-        run: python tools/docs_lint/run.py AGENTS.md CLAUDE.md docs/fork-workflow.md tools/agent_skills/README.md
+        run: python tools/docs_lint/run.py AGENTS.md CLAUDE.md README.md docs/fork-workflow.md docs/roblox-workflow.md roblox/README.md tools/agent_skills/README.md .claude/agents .claude/skills

@@ -1,4 +1,8 @@
-# Docs Directory
+# Docs Directory — Roblox adaptation
+
+For active Roblox documentation, follow AGENTS.md and docs/roblox-workflow.md.
+The historical Godot architecture and wiki material below remains reference only;
+its template rules do not apply to Roblox tasks.
 
 When authoring or editing files in this directory, follow these standards.
 
