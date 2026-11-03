@@ -49,6 +49,7 @@ local subtitles = true
 local shake = 0
 local shakeUntil = 0
 local bright = false
+local environment = require(script.EnvironmentMotion).start()
 
 local function roundCorners(instance: GuiObject, radius: number?)
 	local corner = Instance.new("UICorner")
@@ -533,6 +534,14 @@ end)
 toolButton("Camera shake: cycle OFF / LOW / FULL", function()
 	shake = (shake + 1) % 3
 	toast("Camera shake: " .. ({ "OFF", "LOW", "FULL" })[shake + 1])
+end)
+toolButton("Reduced flashing: ON / OFF", function()
+	environment.ReducedFlashing = not environment.ReducedFlashing
+	toast(
+		if environment.ReducedFlashing
+			then "Reduced flashing ON · stable room lights"
+			else "Reduced flashing OFF · occasional slow lamp failure"
+	)
 end)
 toolButton("Darkness: standard / brighter", function()
 	bright = not bright

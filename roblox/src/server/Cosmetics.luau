@@ -27,6 +27,17 @@ function Cosmetics.apply(player: Player, snapshot: any)
 	lamp.Brightness, lamp.Range = Config.FlashlightBrightness, Config.FlashlightRange
 	lamp.Color = Config.FlashlightColors[if snapshot.OwnsCrew then snapshot.Flashlight else 1]
 	lamp.Enabled = player:GetAttribute("Flashlight") ~= false
+	local housing = head:FindFirstChild("CrewLampHousing")
+	if not housing then
+		local shell = Instance.new("Part")
+		shell.Name, shell.Size, shell.CFrame =
+			"CrewLampHousing", Vector3.new(0.65, 0.45, 0.5), head.CFrame * CFrame.new(0, 0.3, -0.65)
+		shell.Color, shell.Material = Color3.fromRGB(213, 136, 55), Enum.Material.Metal
+		shell.CanCollide, shell.CanQuery, shell.CanTouch, shell.Massless = false, false, false, true
+		shell.Parent = head
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0, weld.Part1, weld.Parent = head, shell, shell
+	end
 	local uniform = if snapshot.OwnsCrew then snapshot.Uniform else 0
 	if uniform > 0 then
 		local outfit = Instance.new("Folder")

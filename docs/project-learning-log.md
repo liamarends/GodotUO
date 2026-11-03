@@ -102,3 +102,17 @@ raw session logs or hidden reasoning. Separate observed facts from hypotheses.
 - File Explorer opening and Studio Ctrl+O/text entry eventually worked. Opening
   a place created a new native window: rediscover its ID before further actions.
   Immediate AX observations sometimes preceded the visible transition.
+
+### 2026-11-03: Vale property art and engine fixtures
+
+- Added original part-built family-house environment, distinct furniture silhouettes,
+  sealed room/cellar/garden routes and animated quilted pursuer without paid assets.
+- Engine bounds probes caught upstairs route obstructions; widened bedroom openings,
+  moved beds and rerouted the sampled stair approach. All twelve routes now pass.
+- Engine delivery fixture caught dropped-in-truck loads missing credit. Centralized
+  contained-load delivery and retained last-carrier attribution; added regression.
+- Solo Studio assertions: 37/37, offline regression: 35/35; 883 scene parts and five
+  shadow lights. Fixture completion marker subsequently corrected from table to
+  Folder. Multi-client startup requires more than the former 40-second allowance.
+- Geometry/pathfinding fixtures are distinct from human-input play or performance
+  certification. Live commerce, physical mobile and natural multiplayer remain gates.

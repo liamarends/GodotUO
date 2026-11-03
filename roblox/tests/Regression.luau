@@ -358,4 +358,16 @@ test("delivered objects cannot be claimed again",function()
  local f,item,p=carryFixture();item.Delivered=true;f:pickup(p,item,1)
  assert(#item.Carriers==0 and f.Carrying[p]==nil)
 end)
+test("a dropped truck load is credited once to its last carriers",function()
+ local f,item,p=carryFixture()
+ item.Size={X=3,Z=3};item.Id=1;item.LastCarriers={p};item.Model={PivotTo=function() end}
+ local credited=0
+ f.Game.delivered=function(_,object,carriers) assert(object==item and carriers[1]==p);credited+=1 end
+ loaded.Map.inTruck=function() return false end
+ assert(not f:tryDeliver(item) and credited==0)
+ loaded.Map.inTruck=function() return true end
+ assert(f:tryDeliver(item));assert(f:tryDeliver(item))
+ assert(credited==1 and item.Delivered and #item.Carriers==0)
+ loaded.Map.inTruck=function() return false end
+end)
 print(string.format("%d regression cases passed. Mock services only; Studio/live-platform checks remain required.", tests))

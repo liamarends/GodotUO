@@ -105,6 +105,7 @@ function Furniture.pickup(self: any, player: Player, item: any, slot: number?)
 	-- No yielding between validation and the claim.
 	item.Slots[grabSlot] = player
 	table.insert(item.Carriers, player)
+	item.LastCarriers = table.clone(item.Carriers)
 	self.Carrying[player] = item
 	player:SetAttribute("Carrying", item.Name)
 	player:SetAttribute("LargeCarry", item.Large)
@@ -353,6 +354,9 @@ function Furniture.step(self: any, dt: number)
 			end
 		end
 		self:prompts(item)
+		if self:tryDeliver(item) then
+			continue
+		end
 		self:complication(item)
 		local leader = item.Carriers[1]
 		local required = if item.Large and self.Game:crewCount() > 1 then 2 else 1
@@ -473,16 +477,26 @@ function Furniture.step(self: any, dt: number)
 			item.Model:SetAttribute("Lifted", lifted)
 			item.Model:SetAttribute("CarryTilt", tilt)
 		end
-		if Map.inTruck(self.World, item.Root.Position, math.max(item.Size.X, item.Size.Z) / 2) then
-			item.Delivered = true -- Set before credit/release, once per round/object.
-			local carriers = table.clone(item.Carriers)
-			for _, p in carriers do
-				self:release(p, false)
-			end
-			self:prompts(item)
-			item.Model:PivotTo(CFrame.new(1000, -100, item.Id * 10))
-			self.Game:delivered(item, carriers)
-		end
+		self:tryDeliver(item)
 	end
+end
+
+function Furniture.tryDeliver(self: any, item: any): boolean
+	if item.Delivered then
+		return true
+	end
+	if not Map.inTruck(self.World, item.Root.Position, math.max(item.Size.X, item.Size.Z) / 2) then
+		return false
+	end
+	item.Delivered = true -- Commit before release/credit, including a just-dropped load.
+	local carriers =
+		table.clone(if #item.Carriers > 0 then item.Carriers else item.LastCarriers or {})
+	for _, p in table.clone(item.Carriers) do
+		self:release(p, false)
+	end
+	self:prompts(item)
+	item.Model:PivotTo(CFrame.new(1000, -100, item.Id * 10))
+	self.Game:delivered(item, carriers)
+	return true
 end
 return Furniture

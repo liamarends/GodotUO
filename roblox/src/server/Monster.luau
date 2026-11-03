@@ -10,11 +10,18 @@ function Monster.new(world: any, gameState: any): any
 	local root =
 		Map.part(model, "HumanoidRootPart", Vector3.new(3, 2, 2), world.MonsterSpawn, Color3.new())
 	root.Transparency, root.Anchored = 1, false
+	local joints: { Motor6D } = {}
 	local function body(name: string, size: Vector3, offset: Vector3, color: Color3): Part
 		local p = Map.part(model, name, size, root.CFrame * CFrame.new(offset), color)
 		p.Anchored, p.Massless, p.CanCollide = false, true, false
-		local weld = Instance.new("WeldConstraint")
-		weld.Part0, weld.Part1, weld.Parent = root, p, p
+		local weld = Instance.new("Motor6D")
+		weld.Name, weld.Part0, weld.Part1, weld.C0, weld.Parent =
+			name .. "Joint", root, p, CFrame.new(offset), root
+		if name == "BlanketArm" or name == "Slipper" or name == "Head" then
+			table.insert(joints, weld)
+		end
+		p.CanQuery, p.CanTouch = false, false
+		p.Material = Enum.Material.Fabric
 		return p
 	end
 	body("Torso", Vector3.new(4, 4, 2.6), Vector3.new(0, 0.5, 0), Color3.fromRGB(87, 97, 129))
@@ -75,6 +82,24 @@ function Monster.new(world: any, gameState: any): any
 			Color3.fromRGB(143, 113 + i * 15, 98)
 		)
 	end
+	for row = 1, 4 do
+		for col = 1, 4 do
+			body(
+				"QuiltStitch",
+				Vector3.new(0.65, 0.06, 0.08),
+				Vector3.new((col - 2.5) * 0.85, row * 0.75 - 1.4, -1.35),
+				Color3.fromRGB(181, 161, 123)
+			)
+		end
+	end
+	for _, x in { -1, 1 } do
+		body(
+			"HangingTassel",
+			Vector3.new(0.15, 1.5, 0.15),
+			Vector3.new(x * 1.7, -1.5, -1.1),
+			Color3.fromRGB(132, 110, 81)
+		)
+	end
 	local self: any = {
 		World = world,
 		Game = gameState,
@@ -93,6 +118,7 @@ function Monster.new(world: any, gameState: any): any
 		Attack = nil,
 		Generation = 0,
 		KnockAt = 0,
+		Joints = joints,
 	}
 	setmetatable(self, { __index = Monster })
 	self:reset()
@@ -106,6 +132,10 @@ function Monster.reset(self: any)
 	self.Model:PivotTo(self.World.MonsterSpawn)
 	self.Label.Text = "z Z z..."
 	self.RestUntil = os.clock() + Config.Monster.RestSeconds
+	local seal = self.World.MemorySeal
+	if seal then
+		seal.Transparency, seal.CanCollide, seal.CanQuery = 0, true, true
+	end
 end
 
 function Monster.wake(self: any)
@@ -117,6 +147,10 @@ function Monster.wake(self: any)
 	self.KnockAt = 0
 	self.Root.Anchored = false
 	self.Root:SetNetworkOwner(nil)
+	local seal = self.World.MemorySeal
+	if seal then
+		seal.Transparency, seal.CanCollide, seal.CanQuery = 1, false, false
+	end
 	self.Label.Text = "WHO MOVED MY SOFA?"
 	self.Game:announce("THE DUVET IS AWAKE! Break sight, then hide in a wardrobe.", "Hunt")
 end
@@ -183,6 +217,15 @@ function Monster.pathTo(self: any, destination: Vector3)
 end
 
 function Monster.step(self: any)
+	for i, joint in self.Joints do
+		joint.C0 = CFrame.new(joint.C0.Position)
+			* CFrame.Angles(
+				math.sin(os.clock() * (if self.Hunting then 5 else 0.8) + i)
+					* (if self.Hunting then 0.22 else 0.035),
+				0,
+				0
+			)
+	end
 	if not self.Hunting then
 		return
 	end

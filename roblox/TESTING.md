@@ -152,3 +152,43 @@ Required manual checks in the new build:
 9. Accessibility: phone portrait/landscape, subtitles/direction cues, brightness,
    shake OFF/LOW/FULL, wardrobe/help prompts and tool scrolling. Check audio and
    frame cost on target mobile hardware. No performance measurements exist yet.
+
+## Vale house environment audit (2026-11-03 UTC)
+
+Implemented original procedural furniture, family-house dressing, kitchen/utility
+wing, cellar, sealed family room, garden return route, truck detail, animated
+quilted pursuer, positional ambience and reduced-flashing control. See ENVIRONMENT.md.
+
+Executed checks:
+- All 14 shipped Luau files compile; all 35 mocked regression cases pass.
+- Roblox-aware static analysis, StyLua, Rojo build and whitespace checks pass.
+- Workflow helper tests: 8 pass. Agent-skill tests: 6 pass. Privacy scan clean.
+- Studio 0.745 solo engine fixture: 37 checks pass, zero assertion failures.
+  Covers twelve spawn bounds and sampled swept delivery routes, five real engine
+  pathfinding requests, range rejection, pickup/release, delivery deduplication,
+  boost consumption, hunt reset, timeout defeat, replay and contract departure.
+  Scene count: 883 parts and five shadow-casting environment lights.
+- Earlier fixture runs exposed blocked upstairs routes and a real dropped-delivery
+  bug. Widened/rearranged routes; delivery now checks fully contained dropped loads
+  and credits their last carriers exactly once. Added an offline regression.
+- That solo run emitted a test-only completion-marker error after its 37 checks;
+  corrected world:SetAttribute to world.Folder:SetAttribute. No production code
+  uses this marker. Multiplayer startup also exceeded the original 40-second
+  fixture allowance; increased it to 180 seconds. Neither issue is hidden by the
+  assertion totals.
+
+These fixtures reposition avatars/items and shorten deadlines. They do not prove
+natural carrying, chase fairness, real-input rounds, mobile usability or frame rate.
+Real multiplayer/disconnect play, physical mobile performance, canceled purchases,
+owned passes and cross-server live DataStore persistence still need the manual
+checklist above. Existing mocked receipt/save checks are not live commerce tests.
+Product IDs remain disabled; no Robux was spent and no live inventory was changed.
+
+Legacy repository-wide docs lint has three existing missing-target findings
+(localize skill, release workflow and workflow-helper README), outside this change.
+
+Four-client attempt: Studio started a local server and client windows, but only
+one client reached the fixture before its deadline. Opening the rebuilt fixture
+then produced Studio's Low System Resources warning. Multiplayer is NOT passed.
+The longer-startup harness and corrected completion marker are built/compiled;
+those two harness edits have not yet received a complete engine rerun.

@@ -39,10 +39,15 @@ function House.new(world: any, gameState: any): any
 		Disturbance = 0,
 		LastNoise = Vector3.zero,
 		RestoredAt = 0,
+		AmbientAt = 0,
 	}
 	setmetatable(self, { __index = House })
-	for _, y in { 1, 14 } do
-		local hinge = CFrame.new(-10, y, -8)
+	for _, location in
+		{ Vector3.new(-10, 1, -8), Vector3.new(-10, 14, -8), Vector3.new(-7, 1, -60) }
+	do
+		local y = location.Y
+		local rear = location.Z == -60
+		local hinge = CFrame.new(location) * CFrame.Angles(0, if rear then math.pi / 2 else 0, 0)
 		local door = Map.part(
 			world.Blockers,
 			"MemoryDoor",
@@ -62,6 +67,11 @@ function House.new(world: any, gameState: any): any
 			WedgeUntil = 0,
 		}
 		table.insert(self.Doors, entry)
+		require(script.Parent.Environment).text(
+			door,
+			if rear then "GARDEN EXIT\nOPEN THE LONG WAY" else "VALE HOUSE\nPLEASE CLOSE QUIETLY",
+			Enum.NormalId.Right
+		)
 		prompt.Triggered:Connect(function(p: Player)
 			local hrp = root(p)
 			if
@@ -275,6 +285,21 @@ function House.step(self: any, dt: number)
 		return
 	end
 	local now = os.clock()
+	local traces = self.World.Folder:FindFirstChild("MemoryTraces")
+	local photo = traces and traces:FindFirstChild("HiddenFamilyPhoto")
+	local chair = self.Game.Furniture.Items[3]
+	if photo and chair and (chair.Root.Position - chair.Spawn.Position).Magnitude > 3 then
+		photo.Transparency = 0
+		(photo:FindFirstChildOfClass("SurfaceGui") :: SurfaceGui).Enabled = true
+	end
+	if now >= self.AmbientAt and not self.Game.Monster.Hunting then
+		self.AmbientAt = now + 24
+		local sources = self.World.AmbientSources
+		if sources and #sources > 0 then
+			local source = sources[math.random(1, #sources)]
+			self:cue(source.Kind, source.Text, source.Position)
+		end
+	end
 	if
 		Config.Stage >= 2
 		and not self.Game.Monster.Hunting

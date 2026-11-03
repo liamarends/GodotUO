@@ -1,6 +1,8 @@
 --!strict
 local Lighting = game:GetService("Lighting")
 local Map = {}
+local Environment = require(script.Parent.Environment)
+local FurnitureArt = require(script.Parent.FurnitureArt)
 local wood = Color3.fromRGB(91, 74, 65)
 local cream = Color3.fromRGB(143, 146, 139)
 local orange = Color3.fromRGB(224, 132, 49)
@@ -262,11 +264,18 @@ function Map.build(): any
 	Lighting.Ambient, Lighting.OutdoorAmbient =
 		Color3.fromRGB(44, 51, 74), Color3.fromRGB(70, 83, 119)
 	Lighting.FogColor, Lighting.FogStart, Lighting.FogEnd = Color3.fromRGB(32, 44, 65), 100, 220
+	Environment.build(world)
 	return world
 end
 
 function Map.furniture(world: any): { any }
 	world.Props:ClearAllChildren()
+	local traces = world.Folder:FindFirstChild("MemoryTraces")
+	if traces then
+		traces:Destroy()
+	end
+	traces = Instance.new("Folder")
+	traces.Name, traces.Parent = "MemoryTraces", world.Folder
 	local cargo = world.Folder:FindFirstChild("LoadedCargo")
 	if cargo then
 		cargo:Destroy()
@@ -301,56 +310,15 @@ function Map.furniture(world: any): { any }
 	}
 	local items = {}
 	for id, spec in specs do
-		local name, large, size, pos, kind =
-			spec[1] :: string,
-			spec[2] :: boolean,
-			spec[3] :: Vector3,
-			spec[4] :: Vector3,
-			spec[5] :: string
+		local name, large, size, pos =
+			spec[1] :: string, spec[2] :: boolean, spec[3] :: Vector3, spec[4] :: Vector3
 		local model = Instance.new("Model")
 		model.Name, model.Parent = name, world.Props
 		local center = pos + Vector3.new(0, size.Y / 2, 0)
 		local root = Map.part(model, "CarryBounds", size, CFrame.new(center), orange)
 		root.Transparency, root.CanCollide = 1, false
 		model.PrimaryPart = root
-		local function detail(n: string, s: Vector3, offset: Vector3, c: Color3)
-			local p = Map.part(model, n, s, CFrame.new(pos + offset), c, Enum.Material.Wood)
-			p.CanCollide, p.CanTouch, p.CanQuery = false, false, false
-		end
-		if kind == "Box" then
-			detail("Cardboard", size, Vector3.new(0, 1.5, 0), Color3.fromRGB(164, 123, 79))
-			detail("Tape", Vector3.new(0.5, 3.05, 3.05), Vector3.new(0, 1.5, 0), orange)
-		elseif kind == "Lamp" then
-			detail("Base", Vector3.new(2, 0.3, 2), Vector3.new(0, 0.2, 0), wood)
-			detail("Stem", Vector3.new(0.3, 2.5, 0.3), Vector3.new(0, 1.5, 0), orange)
-			detail(
-				"Shade",
-				Vector3.new(2.7, 1.2, 2.7),
-				Vector3.new(0, 3.3, 0),
-				Color3.fromRGB(210, 193, 151)
-			)
-		else
-			local cushion = if kind == "Sofa" then Color3.fromRGB(84, 120, 112) else wood
-			detail("SeatOrTop", Vector3.new(size.X, 0.7, size.Z), Vector3.new(0, 2.4, 0), cushion)
-			if kind ~= "Table" then
-				detail(
-					"Back",
-					Vector3.new(size.X, 2, 0.6),
-					Vector3.new(0, 3, size.Z / 2 - 0.3),
-					cushion
-				)
-			end
-			for _, x in { -1, 1 } do
-				for _, z in { -1, 1 } do
-					detail(
-						"Leg",
-						Vector3.new(0.4, 2.3, 0.4),
-						Vector3.new(x * (size.X / 2 - 0.4), 1.15, z * (size.Z / 2 - 0.4)),
-						wood
-					)
-				end
-			end
-		end
+		FurnitureArt.build(model, id, size, pos)
 		local prompt = Instance.new("ProximityPrompt")
 		prompt.ActionText = if large then "Carry / join (2 crew; solo drag)" else "Carry"
 		prompt.ObjectText, prompt.KeyboardKeyCode = name, Enum.KeyCode.E
@@ -397,6 +365,26 @@ function Map.furniture(world: any): { any }
 				wood
 			)
 			drawer.CanCollide, drawer.CanQuery = false, false
+		end
+		local trace = Environment.part(
+			traces :: Instance,
+			"CleanOutline",
+			Vector3.new(size.X, 0.025, size.Z),
+			CFrame.new(pos + Vector3.new(0, 0.03, 0)),
+			Color3.fromRGB(123, 103, 78)
+		)
+		trace:SetAttribute("ItemId", id)
+		if id == 3 then
+			local photo = Environment.part(
+				traces :: Instance,
+				"HiddenFamilyPhoto",
+				Vector3.new(1.8, 0.03, 1.3),
+				CFrame.new(pos + Vector3.new(0, 0.06, 0)),
+				Color3.fromRGB(66, 48, 42)
+			)
+			Environment.text(photo, "JUNE · 1987\nWE ARE STILL HERE", Enum.NormalId.Top)
+			photo.Transparency = 1
+			(photo:FindFirstChildOfClass("SurfaceGui") :: SurfaceGui).Enabled = false
 		end
 		local tag = Instance.new("BillboardGui")
 		tag.Name, tag.Size, tag.StudsOffset, tag.MaxDistance, tag.Parent =
