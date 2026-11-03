@@ -16,3 +16,7 @@ The Windows update is based on `Assets/Mayu Blue - Wheel Fitted.unity`. The Ques
 * Keep selected physics rather than relying on the client to strip an over-budget category. The budget pass retained eight PhysBones, at most 27 affected transforms, three colliders, at most 23 collision checks and 16 contacts.
 
 In a headset, wear the uploaded avatar and check the hair, shirt, pants, crouching, cyber limbs, and another user's view of the switches. Physics, audio, shader effects and interactive props can behave differently from the PC client. The SDK's ownership agreement is an account-holder step when it appears.
+
+## Published result
+
+VRChat confirmed that the existing private **kai's mayu** listing reached version 8 with both Windows and Android packages. The uploaded Quest bundle measured 4,254,302 bytes compressed and 18,169,664 bytes unpacked. The final material audit found no non-mobile shader on a renderer or an animated material. Emo Hair was the first Expressions control. The headset wear test remains pending.
