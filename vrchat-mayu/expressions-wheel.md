@@ -37,3 +37,10 @@ Mayu Adult 0.9 is an FBX patch. Its creator specifies a clean Mayu 2.0 or 2.0.1 
 ## Windows build result
 
 The VRChat SDK completed the build. The UnityFS bundle measures 70,835,955 bytes on disk and 346,321,432 bytes of uncompressed block data. The local test copy was verified by SHA-256 against the build. In the PC client, open **Avatars → SDK Test Avatars → Mayu Blue - Wheel**, then open **Expressions**. The compiled FX controller's Ripper Claws action activates the arms mesh and the wrist and elbow hide shapes. The GhostStep action activates the legs and screen meshes and the knee and leg-fluff hide shapes. In-client interaction, fit through the full range of motion, and publication remain untested. [VRChat local avatar testing](https://creators.vrchat.com/avatars/creating-your-first-avatar/)
+## Fitted wheel revision
+
+Open `Assets/Mayu Blue - Wheel Fitted.unity` for the fitted version. The PC local test entry **Mayu Blue - Wheel** now points to this build. The earlier wheel scene is also available.
+
+The original Mayu Tora PC prefab supplied the target hip contour. Matching the corresponding UV surface samples preserves the edited Tora’s rig and blendshapes. At 0.67 m above the avatar origin the earlier rear contour was 0.1586 m behind the origin. Both the stock mesh and the fitted export measure approximately 0.1377 m there. The glasses were moved 0.061 m back along the avatar’s forward axis through a head-mounted offset so their existing control can still move them relative to the new position.
+
+The Ripper Claws and GhostStep equip actions drive separate alpha cutouts using the creators’ masks. Front renders of the exported body verified arms only, legs only, both on and both off. Outfit geometry was inspected at rest and with the head, elbows and knees rotated. A live VRChat wear test is still needed for tracking, PhysBones and interactive prop constraints.
