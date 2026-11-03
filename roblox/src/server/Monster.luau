@@ -52,6 +52,29 @@ function Monster.new(world: any, gameState: any): any
 	label.Size, label.BackgroundTransparency, label.TextScaled = UDim2.fromScale(1, 1), 1, true
 	label.Font, label.TextColor3, label.Text, label.Parent =
 		Enum.Font.GothamBold, Color3.fromRGB(255, 217, 163), "z Z z...", tag
+	-- A quilted doorframe silhouette: the house wears the blanket left on its last bed.
+	body(
+		"MemoryLintel",
+		Vector3.new(6, 0.5, 0.5),
+		Vector3.new(0, 5, 0.6),
+		Color3.fromRGB(92, 72, 59)
+	)
+	for _, x in { -1, 1 } do
+		body(
+			"MemoryJamb",
+			Vector3.new(0.5, 7, 0.5),
+			Vector3.new(x * 2.8, 1.7, 0.6),
+			Color3.fromRGB(92, 72, 59)
+		)
+	end
+	for i = 1, 3 do
+		body(
+			"QuiltPatch",
+			Vector3.new(1, 0.8, 0.1),
+			Vector3.new(i - 2, 0.5, -1.35),
+			Color3.fromRGB(143, 113 + i * 15, 98)
+		)
+	end
 	local self: any = {
 		World = world,
 		Game = gameState,
@@ -69,6 +92,7 @@ function Monster.new(world: any, gameState: any): any
 		Investigate = world.MonsterSpawn.Position,
 		Attack = nil,
 		Generation = 0,
+		KnockAt = 0,
 	}
 	setmetatable(self, { __index = Monster })
 	self:reset()
@@ -89,6 +113,8 @@ function Monster.wake(self: any)
 		return
 	end
 	self.Hunting, self.EndAt, self.LastPath = true, os.clock() + Config.Monster.HuntSeconds, 0
+	self.WakeAt = os.clock() + 2
+	self.KnockAt = 0
 	self.Root.Anchored = false
 	self.Root:SetNetworkOwner(nil)
 	self.Label.Text = "WHO MOVED MY SOFA?"
@@ -168,6 +194,18 @@ function Monster.step(self: any)
 			"Rest"
 		)
 		return
+	end
+	if os.clock() < self.WakeAt then
+		self.Humanoid:MoveTo(self.Root.Position)
+		return
+	end
+	if os.clock() > self.KnockAt then
+		self.KnockAt = os.clock() + 3
+		self.Game.House:cue(
+			"Duvet",
+			"The Duvet: two knocks, then a dragging blanket.",
+			self.Root.Position
+		)
 	end
 	local nearest: Player? = nil
 	local best = math.huge

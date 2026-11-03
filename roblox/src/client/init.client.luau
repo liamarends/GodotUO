@@ -6,6 +6,8 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local ContextActionService = game:GetService("ContextActionService")
 local StarterGui = game:GetService("StarterGui")
 local Debris = game:GetService("Debris")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
 local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("GameConfig"))
 local player = Players.LocalPlayer
 local remotes = ReplicatedStorage:WaitForChild("HouseRemotes")
@@ -43,6 +45,10 @@ local priceInfo: any = {}
 local cards: any = {}
 local pendingBuy: any = nil
 local sprint = false
+local subtitles = true
+local shake = 0
+local shakeUntil = 0
+local bright = false
 
 local function roundCorners(instance: GuiObject, radius: number?)
 	local corner = Instance.new("UICorner")
@@ -144,9 +150,13 @@ end
 local checklist =
 	frame(gui, "Checklist", UDim2.fromOffset(10, 245), UDim2.new(0, 285, 0, 250), colors.Panel)
 checklist.Visible = false
-local listText = label(checklist, "", UDim2.fromOffset(10, 10), UDim2.new(1, -20, 1, -20), 13)
+local listScroll = Instance.new("ScrollingFrame")
+listScroll.Size, listScroll.BackgroundTransparency, listScroll.AutomaticCanvasSize, listScroll.CanvasSize, listScroll.Parent =
+	UDim2.fromScale(1, 1), 1, Enum.AutomaticSize.Y, UDim2.new(), checklist
+local listText = label(listScroll, "", UDim2.fromOffset(10, 10), UDim2.new(1, -30, 0, 0), 13)
+listText.AutomaticSize = Enum.AutomaticSize.Y
 listText.TextYAlignment = Enum.TextYAlignment.Top
-button(gui, "Checklist [C]", UDim2.fromOffset(10, 158), UDim2.fromOffset(130, 38), function()
+button(gui, "Checklist [C]", UDim2.fromOffset(10, 158), UDim2.new(0.33, -12, 0, 38), function()
 	checklist.Visible = not checklist.Visible
 end)
 local shopButton: TextButton
@@ -281,7 +291,7 @@ local function toggleShop()
 	end
 end
 shopButton =
-	button(gui, "Supplies [B]", UDim2.fromOffset(148, 158), UDim2.fromOffset(130, 38), toggleShop)
+	button(gui, "Supplies [B]", UDim2.new(0.33, 7, 0, 158), UDim2.new(0.33, -12, 0, 38), toggleShop)
 
 for order, key in { "SoftSoles", "Padding", "CrewPack" } do
 	local catalog = Config.Catalog[key]
@@ -420,8 +430,8 @@ local startButton = button(
 local controls = frame(
 	gui,
 	"CarryControls",
-	UDim2.new(1, -206, 1, -173),
-	UDim2.fromOffset(196, 156),
+	UDim2.new(1, -206, 1, -220),
+	UDim2.fromOffset(196, 204),
 	colors.Panel
 )
 button(controls, "Turn ↶ [R]", UDim2.fromOffset(7, 6), UDim2.fromOffset(88, 42), function()
@@ -446,6 +456,104 @@ local sprintButton = button(
 button(controls, "Light [F]", UDim2.fromOffset(101, 104), UDim2.fromOffset(88, 42), function()
 	action:FireServer("Flashlight")
 end)
+local liftButton = button(
+	controls,
+	"Lift [U]",
+	UDim2.fromOffset(7, 153),
+	UDim2.fromOffset(88, 42),
+	function()
+		action:FireServer("Lift")
+	end
+)
+button(controls, "Tool [V]", UDim2.fromOffset(101, 153), UDim2.fromOffset(88, 42), function()
+	action:FireServer("UseTool")
+end)
+local utility =
+	frame(gui, "CrewTools", UDim2.fromScale(0.5, 0.5), UDim2.new(1, -24, 1, -24), colors.Panel)
+utility.AnchorPoint, utility.Visible, utility.ZIndex = Vector2.new(0.5, 0.5), false, 12
+local utilitySize = Instance.new("UISizeConstraint")
+utilitySize.MaxSize, utilitySize.Parent = Vector2.new(580, 580), utility
+label(utility, "CREW TOOLS & ACCESS", UDim2.fromOffset(12, 5), UDim2.new(1, -70, 0, 36), 18)
+button(utility, "X", UDim2.new(1, -52, 0, 6), UDim2.fromOffset(42, 38), function()
+	utility.Visible = false
+end)
+local toolScroll = Instance.new("ScrollingFrame")
+toolScroll.Size, toolScroll.Position, toolScroll.BackgroundTransparency =
+	UDim2.new(1, -20, 1, -58), UDim2.fromOffset(10, 50), 1
+toolScroll.AutomaticCanvasSize, toolScroll.CanvasSize, toolScroll.Parent =
+	Enum.AutomaticSize.Y, UDim2.new(), utility
+local toolLayout = Instance.new("UIListLayout")
+toolLayout.Padding, toolLayout.SortOrder, toolLayout.Parent =
+	UDim.new(0, 7), Enum.SortOrder.LayoutOrder, toolScroll
+local toolOrder = 0
+local function toolButton(text: string, callback: () -> ()): TextButton
+	toolOrder += 1
+	local b = button(toolScroll, text, UDim2.new(), UDim2.new(1, -12, 0, 44), callback)
+	b.LayoutOrder = toolOrder
+	return b
+end
+for _, ping in { "Hold", "Turn", "Put down" } do
+	toolButton("Ping: " .. ping, function()
+		action:FireServer("Ping", ping)
+		utility.Visible = false
+	end)
+end
+for _, equipment in Config.Equipment do
+	toolButton("Free truck exchange: " .. equipment, function()
+		action:FireServer("Equipment", equipment)
+	end)
+end
+local equipmentInfo = label(
+	toolScroll,
+	"Decoy: redirect sound (35s cooldown). Wedge: keep a door open 45s. Dolly: solo drag +2 speed; cannot lift. Flashlight is always free.",
+	UDim2.new(),
+	UDim2.new(1, -16, 0, 80),
+	13
+)
+toolOrder += 1
+equipmentInfo.LayoutOrder = toolOrder
+local crewInfo = label(toolScroll, "", UDim2.new(), UDim2.new(1, -16, 0, 75), 13)
+toolOrder += 1
+crewInfo.LayoutOrder = toolOrder
+local toolStatus = toolButton("Use equipment [V]", function()
+	action:FireServer("UseTool")
+	utility.Visible = false
+end)
+toolButton("Recover stuck load [J] · returns a few studs", function()
+	action:FireServer("RecoverLoad")
+	utility.Visible = false
+end)
+local departButton = toolButton("DEPART · everyone aboard must approve", function()
+	action:FireServer("Depart")
+end)
+toolButton("Subtitles on/off", function()
+	subtitles = not subtitles
+	toast(if subtitles then "Important sound subtitles ON" else "Sound subtitles OFF")
+end)
+toolButton("Camera shake: cycle OFF / LOW / FULL", function()
+	shake = (shake + 1) % 3
+	toast("Camera shake: " .. ({ "OFF", "LOW", "FULL" })[shake + 1])
+end)
+toolButton("Darkness: standard / brighter", function()
+	bright = not bright
+	Lighting.ExposureCompensation = if bright then 0.7 else 0
+	toast(if bright then "Brighter rooms" else "Standard moonlight")
+end)
+toolButton("Earned Memory Keeper badge on/off (12 stamps)", function()
+	action:FireServer("Cosmetic", "badge", not personal.Inventory.Badge)
+end)
+button(gui, "Tools [X]", UDim2.new(0.66, 8, 0, 158), UDim2.new(0.34, -18, 0, 38), function()
+	utility.Visible = not utility.Visible
+	shop.Visible = false
+	checklist.Visible = false
+end)
+local subtitle = label(gui, "", UDim2.new(0.05, 0, 0.72, 0), UDim2.new(0.9, 0, 0, 48), 15)
+subtitle.TextXAlignment, subtitle.TextStrokeTransparency = Enum.TextXAlignment.Center, 0.2
+local subtitleAt = 0
+local report =
+	frame(gui, "ShiftReport", UDim2.fromScale(0.5, 0.5), UDim2.new(0.9, 0, 0.45, 0), colors.Panel)
+report.AnchorPoint, report.Visible = Vector2.new(0.5, 0.5), false
+local reportText = label(report, "", UDim2.fromOffset(14, 12), UDim2.new(1, -28, 1, -24), 16)
 local leaveButton = button(
 	gui,
 	"LEAVE HIDE [H]",
@@ -476,6 +584,9 @@ end)
 for _, pair in
 	{
 		{ Name = "Drop", Key = Enum.KeyCode.G },
+		{ Name = "Lift", Key = Enum.KeyCode.U },
+		{ Name = "UseTool", Key = Enum.KeyCode.V },
+		{ Name = "RecoverLoad", Key = Enum.KeyCode.J },
 		{ Name = "Flashlight", Key = Enum.KeyCode.F },
 		{ Name = "LeaveHide", Key = Enum.KeyCode.H },
 	}
@@ -507,6 +618,24 @@ bind("DWH_Checklist", Enum.KeyCode.C, function(input)
 	end
 end)
 
+bind("DWH_Tools", Enum.KeyCode.X, function(input)
+	if input == Enum.UserInputState.Begin then
+		utility.Visible = not utility.Visible
+		shop.Visible = false
+		checklist.Visible = false
+	end
+end)
+for index, ping in { "Hold", "Turn", "Put down" } do
+	bind(
+		"DWH_Ping" .. index,
+		({ Enum.KeyCode.Z, Enum.KeyCode.N, Enum.KeyCode.M })[index],
+		function(input)
+			if input == Enum.UserInputState.Begin then
+				action:FireServer("Ping", ping)
+			end
+		end
+	)
+end
 local function soundAt(kind: string, pos: Vector3)
 	local anchor = Instance.new("Part")
 	anchor.Anchored, anchor.CanCollide, anchor.CanQuery, anchor.CanTouch, anchor.Transparency =
@@ -516,10 +645,21 @@ local function soundAt(kind: string, pos: Vector3)
 	-- These are bundled Roblox engine sounds, verified against the installed client.
 	sound.SoundId = if kind == "Bump"
 		then "rbxasset://sounds/action_jump_land.mp3"
-		elseif kind == "Creak" then "rbxasset://sounds/action_get_up.mp3"
+		elseif kind == "Creak" or kind == "Music" then "rbxasset://sounds/action_get_up.mp3"
+		elseif
+			kind == "Knock"
+			or kind == "Duvet"
+			or kind == "Latch"
+		then "rbxasset://sounds/action_jump_land.mp3"
 		else "rbxasset://sounds/action_footsteps_plastic.mp3"
 	sound.Volume, sound.PlaybackSpeed, sound.RollOffMaxDistance =
-		0.55, if kind == "Creak" then 0.45 else 0.75, 100
+		0.5,
+		if kind == "Creak"
+			then 0.45
+			elseif kind == "Music" then 1.5
+			elseif kind == "Duvet" then 0.35
+			else 0.75,
+		75
 	sound.Parent = anchor
 	sound:Play()
 	Debris:AddItem(anchor, 8)
@@ -536,7 +676,8 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 		delivered.Text = "LOAD " .. state.Delivered .. " / " .. state.Required
 		noiseText.Text = "HOUSE NOISE  "
 			.. state.Noise
-			.. "/100"
+			.. "/100 · "
+			.. (state.Awareness or "Asleep")
 			.. (
 				if state.Hunting
 					then "  •  HUNT " .. state.HuntTime .. "s"
@@ -554,17 +695,39 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 			table.insert(
 				lines,
 				(if item.Delivered then "✓ " else "○ ")
+					.. (if item.Required then "[REQ] " else "[OPT] ")
 					.. item.Name
 					.. (if item.Large then " [2]" else "")
 			)
 		end
+		local crewLines = { "CREW · useful even while waiting or downed" }
+		for _, mover in state.Teammates or {} do
+			table.insert(crewLines, mover.Name .. ": " .. mover.Status)
+		end
+		crewInfo.Text = table.concat(crewLines, "\n")
 		listText.Text = table.concat(lines, "\n")
+		report.Visible = state.Phase == "Results" and not utility.Visible and not shop.Visible
+		reportText.Text = "SHIFT REPORT\n" .. state.Result
+		departButton.Text = (
+			if state.Delivered >= state.Required then "DEPART" else "LEAVE EARLY · reduced stamps"
+		)
+			.. " · "
+			.. (state.Votes or 0)
+			.. "/"
+			.. (state.Crew or 0)
+			.. " approvals · tap to approve/cancel"
+		toolStatus.Text = "Use "
+			.. (personal.Equipment or "Decoy")
+			.. " [V] · cooldown "
+			.. (personal.ToolCooldown or 0)
+			.. "s"
 		if state.Phase ~= "Playing" then
 			sprint = false
 		end
 		refreshShop()
 	elseif kind == "Personal" then
 		personal = data
+		liftButton.Text = if data.LiftReady then "Lower [U]" else "Lift [U]"
 		local inv = data.Inventory
 		controls.Visible = state.Phase == "Playing"
 			and data.Participant
@@ -605,7 +768,9 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 			.. data.ActiveSeconds
 			.. "/45s; contribution "
 			.. (if data.Contributed then "✓" else "pending")
-			.. ". All maps, equipment and retries are free."
+			.. ". All maps, equipment and retries are free.\nCosmetic stamps: "
+			.. (inv.Mementos or 0)
+			.. " / 12 for Memory Keeper badge (Tools)."
 		uniformButton.Text = "Uniform: "
 			.. (if inv.Uniform == 0 then "Your avatar" else Config.Uniforms[inv.Uniform].Name)
 		flashlightButton.Text = "Light color " .. inv.Flashlight .. " / 3 · equal brightness"
@@ -637,7 +802,36 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 		if not ok then
 			toast("Roblox could not open the purchase confirmation. Please try later.")
 		end
+	elseif kind == "Cue" then
+		local camera = workspace.CurrentCamera
+		local direction = "nearby"
+		if camera then
+			local offset = camera.CFrame:PointToObjectSpace(data.Position)
+			direction = (
+				if offset.Z > 0
+					then "behind"
+					elseif math.abs(offset.X) < 4 then "ahead"
+					elseif offset.X < 0 then "left"
+					else "right"
+			)
+				.. " · "
+				.. math.floor(offset.Magnitude)
+				.. " studs"
+		end
+		if subtitles or data.Kind == "Ping" then
+			subtitle.Text = data.Text .. " [" .. direction .. "]"
+			subtitleAt = os.clock() + 3
+		end
+		if data.Kind ~= "Noise" and data.Kind ~= "Ping" then
+			soundAt(data.Kind, data.Position)
+		end
+		if data.Kind == "Duvet" or data.Kind == "Knock" then
+			task.delay(0.3, function()
+				soundAt(data.Kind, data.Position)
+			end)
+		end
 	elseif kind == "Warning" then
+		shakeUntil = os.clock() + 0.8
 		toast(data, true)
 	elseif kind == "Ambience" then
 		soundAt("Creak", data)
@@ -652,6 +846,57 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 	end
 end)
 
+-- Local procedural carrying pose; no uploaded animation IDs or game-state authority.
+local shoulders: { Motor6D } = {}
+local lastChar: Model? = nil
+local posed = false
+RunService.PreSimulation:Connect(function()
+	local char = player.Character
+	if char ~= lastChar then
+		lastChar = char
+		shoulders = {}
+		posed = false
+		if char then
+			for _, joint in char:GetDescendants() do
+				if
+					joint:IsA("Motor6D")
+					and (
+						joint.Name == "RightShoulder"
+						or joint.Name == "LeftShoulder"
+						or joint.Name == "Right Shoulder"
+						or joint.Name == "Left Shoulder"
+					)
+				then
+					table.insert(shoulders, joint)
+				end
+			end
+		end
+	end
+	if personal.Carry then
+		posed = true
+		for _, joint in shoulders do
+			joint.Transform = CFrame.Angles(
+				math.rad(-65) + (if personal.LiftReady then -0.2 else 0),
+				0,
+				math.sin(os.clock() * 4) * 0.025
+			)
+		end
+	elseif posed then
+		for _, joint in shoulders do
+			joint.Transform = CFrame.identity
+		end
+		posed = false
+	end
+end)
+RunService:BindToRenderStep("DWHComfort", Enum.RenderPriority.Camera.Value + 1, function()
+	if os.clock() > subtitleAt then
+		subtitle.Text = ""
+	end
+	local camera = workspace.CurrentCamera
+	if camera and shake > 0 and os.clock() < shakeUntil then
+		camera.CFrame *= CFrame.Angles(math.sin(os.clock() * 35) * 0.002 * shake, 0, 0)
+	end
+end)
 -- Reset cannot be used as a free revive. Server death handling also preserves downed state.
 task.spawn(function()
 	for _ = 1, 10 do

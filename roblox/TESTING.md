@@ -88,3 +88,45 @@ multiplayer session, mobile device test, real DataStore
 transaction, actual purchase, real owned-pass check or Roblox publication was
 performed during implementation. The offline tests demonstrate logic under
 mocks; they do not establish platform integration or game feel.
+
+## Living-house update validation (2026-11-02)
+
+Implemented source: [LIVING-HOUSE.md](LIVING-HOUSE.md). All 11 shipped Luau files
+compile; 34 offline regression cases pass. New cases execute the actual Furniture
+pickup/release/lift/bump methods against controlled world doubles, plus departure
+validation, awareness/assignment rules, earned badge authorization and atomic
+reward retries. Existing receipt, free-use, concurrent activation and inventory
+cases continue to pass. Roblox-aware type analysis, StyLua and Rojo assembly pass.
+These are code/build checks, not physics, replication, player-path or live-sale proof.
+
+Studio was found and restored. Its file dialog repeatedly returned stale/unavailable
+UI element indexes; attempts to open the generated place did not produce a verified
+new play session. No fresh Studio, recording, audio-quality, touch or multiplayer
+PASS is claimed for this update. Earlier startup observations above apply only to
+the earlier revision. No real products were purchased or created.
+
+Required manual checks in the new build:
+
+1. Solo: clock in, read exact CONTRACT labels, carry/turn/lift/set down, deliver an
+   optional keepsake without increasing required count; try dolly and stuck recovery.
+2. Two clients: claim opposite handles simultaneously, reject a third claim, turn
+   through a door, require both lift votes, disconnect one carrier, then solo drag.
+3. Four clients: ten named objectives, two optional keepsakes, clear mobile controls,
+   departure requires all four approvals; stepping out cancels that mover's vote.
+4. House: walk both floor routes; induce 35/70/100 awareness, local darkness and
+   doors; make sure doors never push/trap a player or furniture. Wedge, reopen,
+   and verify the 45s expiration. Check decoy cooldown survives equipment swaps.
+5. Each complication: replay until selected, read its hint, trigger it after 40s,
+   use its countermeasure. No watched-object return; no carried/delivered return.
+6. Pursuer: hear/see warning, break sight, hide, rescue, use solo recoveries; verify
+   quiet breathing room after a hunt and nearby mirror warning. Never test by
+   teleporting the player and call that real-input proof.
+7. Win with required items and unanimous departure; leave early with fewer stamps;
+   lose on timer/downed team; replay and inspect clean slots, votes, doors, lights,
+   furniture, inventories and no duplicate event subscriptions.
+8. Shop: canceled prompts grant nothing; repeated receipts grant once; failed and
+   ambiguous saves remain retryable; pass ownership is server-checked. Rejoin in a
+   separate published test experience to verify uses, stamps and badge persist.
+9. Accessibility: phone portrait/landscape, subtitles/direction cues, brightness,
+   shake OFF/LOW/FULL, wardrobe/help prompts and tool scrolling. Check audio and
+   frame cost on target mobile hardware. No performance measurements exist yet.

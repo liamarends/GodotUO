@@ -48,17 +48,33 @@ hand edits to generated parts are replaced at the next server start.
 | Leave wardrobe | H or wardrobe E | Leave hide button |
 | Checklist / shop | C / B | Checklist / Supplies buttons |
 
-The checklist asks for **any 4 / 6 / 8 / 10 labeled objects**, for 1 / 2 / 3 / 4
-players present at gameplay start. Small items need one mover. Large items need
-two: the first carrier steers and rotates, the second stays close. In solo play,
-including after everyone else disconnects, large items drag slowly. Put objects
-fully inside the orange truck bay; each delivery turns into packed cargo and
-counts once. When the quota is reached, every remaining mover must be upright
-and inside the bay. The quota stays fixed after disconnects; late joiners wait
-outside for the next round. Set the published experience's maximum players to 4.
+The checklist assigns **4 / 6 / 8 / 10 particular objects** for 1 / 2 / 3 / 4
+starting players. Required objects have CONTRACT labels; optional keepsakes reveal
+short family stories and earn cosmetic stamps. The first contract favors downstairs
+items; subsequent contracts shuffle assignments. Each loaded object counts once.
+
+Small pieces use one carrier. Large pieces have two orange grab handles: stand at
+opposite ends, move together, use R/T to turn, and both toggle U to lift. A lone
+mover drags slowly; the free dolly improves solo dragging but cannot lift. G sets a
+load down carefully; sprint intent makes a drop louder. J recovers a stuck load to
+its last nearby clear position. A disconnect releases that mover's claim; the last
+remaining mover can drag alone. Late joiners wait for the next round.
+
+Use **Tools [X]** for Hold / Turn / Put down pings (also Z / N / M), free equipment
+exchange at the truck, departure, and accessibility settings. V uses a decoy or
+wedge. Decoys have a 35s cooldown and lose to a visible target; wedges keep doors
+open for 45s. Exchanging equipment preserves cooldowns. Flashlights are always free.
+
+**Departure is explicit:** everyone must be upright, aboard, and approve DEPART in
+Tools within 12 seconds. Tap again to cancel; stepping off revokes consent. Leaving
+early is allowed with fewer cosmetic stamps. The starting quota does not increase
+when people join or drop when they disconnect. Set the experience maximum to four.
+
+See [the living-house update](LIVING-HOUSE.md) for object countermeasures, new
+controls, design scope, and the verification boundary.
 
 Walking is quiet; sprinting, dropping loads and bumping walls raise shared noise.
-At 40 noise the house creaks, footsteps sound upstairs and lights flicker. At
+At 35 noise it is Stirring, at 70 Searching, with spaced knocks, portraits and local light failures. At
 100, The Duvet hunts for 32 seconds. Break its sight before entering a wardrobe.
 Its reach warning gives 1.15 seconds to move away. A caught mover is downed;
 an unencumbered teammate can help by remaining within reach for three seconds.

@@ -276,20 +276,26 @@ function Map.furniture(world: any): { any }
 	local specs: { { string | boolean | Vector3 } } = {
 		{ "Unpaid Lamp", false, Vector3.new(3, 4, 3), Vector3.new(-19, 1, 7), "Lamp" },
 		{ "Box of Regrets", false, Vector3.new(3, 3, 3), Vector3.new(6, 1, 15), "Box" },
-		{ "Judgmental Chair", false, Vector3.new(3, 4, 3), Vector3.new(-18, 1, -14), "Chair" },
-		{ "Tax Documents", false, Vector3.new(3, 3, 3), Vector3.new(8, 1, -10), "Box" },
+		{ "Homesick Armchair", false, Vector3.new(3, 4, 3), Vector3.new(-18, 1, -14), "Chair" },
+		{ "Keepsake Music Box", false, Vector3.new(3, 3, 3), Vector3.new(8, 1, -10), "Box" },
 		{ "Sofa So Good", true, Vector3.new(8, 4, 4), Vector3.new(-22, 1, 0), "Sofa" },
 		{ "Family Dining Table", true, Vector3.new(7, 4, 5), Vector3.new(4, 1, 0), "Table" },
 		{ "Emotional Baggage", false, Vector3.new(3, 3, 3), Vector3.new(-20, 14, 5), "Box" },
-		{ "Nightstand", false, Vector3.new(3, 3, 3), Vector3.new(8, 14, -16), "Table" },
 		{
-			"Suspicious Reading Lamp",
+			"Loose-Drawer Nightstand",
+			false,
+			Vector3.new(3, 3, 3),
+			Vector3.new(8, 14, -16),
+			"Table",
+		},
+		{
+			"Hallway Mirror",
 			false,
 			Vector3.new(3, 4, 3),
 			Vector3.new(-18, 14, -10),
 			"Lamp",
 		},
-		{ "Grandma's Chair", false, Vector3.new(3, 4, 3), Vector3.new(8, 14, 16), "Chair" },
+		{ "Grandma's Rocker", false, Vector3.new(3, 4, 3), Vector3.new(8, 14, 16), "Chair" },
 		{ "Dream Couch", true, Vector3.new(8, 4, 4), Vector3.new(-22, 14, 10), "Sofa" },
 		{ "Desk of Unfinished Work", true, Vector3.new(7, 4, 4), Vector3.new(4, 14, 4), "Table" },
 	}
@@ -349,6 +355,57 @@ function Map.furniture(world: any): { any }
 		prompt.ActionText = if large then "Carry / join (2 crew; solo drag)" else "Carry"
 		prompt.ObjectText, prompt.KeyboardKeyCode = name, Enum.KeyCode.E
 		prompt.MaxActivationDistance, prompt.RequiresLineOfSight, prompt.Parent = 9, true, root
+		local handles = {}
+		local prompts = { prompt }
+		if large then
+			prompt.Enabled = false
+			prompts = {}
+			for slot = 1, 2 do
+				local handle = Map.part(
+					model,
+					"Grab" .. slot,
+					Vector3.new(0.5, 0.5, 2),
+					root.CFrame
+						* CFrame.new((if slot == 1 then -1 else 1) * (size.X / 2 + 0.3), 0, 0),
+					orange
+				)
+				handle.CanCollide, handle.CanQuery, handle.CanTouch = false, false, false
+				local grab = prompt:Clone()
+				grab.ObjectText, grab.ActionText, grab.Enabled, grab.Parent =
+					name .. " · handle " .. slot, "Grab this end", true, handle
+				table.insert(handles, handle)
+				table.insert(prompts, grab)
+			end
+		end
+		if id == 9 then
+			local glass = Map.part(
+				model,
+				"MemoryGlass",
+				Vector3.new(2.7, 3.4, 0.2),
+				root.CFrame * CFrame.new(0, 0, -1.4),
+				Color3.fromRGB(113, 151, 173),
+				Enum.Material.Glass
+			)
+			glass.Reflectance, glass.CanCollide, glass.CanQuery = 0.3, false, false
+		end
+		if id == 8 then
+			local drawer = Map.part(
+				model,
+				"LooseDrawer",
+				Vector3.new(2.5, 0.7, 1.7),
+				root.CFrame * CFrame.new(0, 0.3, -0.65),
+				wood
+			)
+			drawer.CanCollide, drawer.CanQuery = false, false
+		end
+		local tag = Instance.new("BillboardGui")
+		tag.Name, tag.Size, tag.StudsOffset, tag.MaxDistance, tag.Parent =
+			"MovingLabel", UDim2.fromOffset(215, 55), Vector3.new(0, size.Y / 2 + 1, 0), 32, root
+		local text = Instance.new("TextLabel")
+		text.Size, text.BackgroundTransparency, text.TextWrapped, text.TextSize =
+			UDim2.fromScale(1, 1), 1, true, 12
+		text.Text, text.TextColor3, text.TextStrokeTransparency, text.Parent =
+			name, Color3.fromRGB(255, 230, 178), 0.3, tag
 		model:SetAttribute("ItemId", id)
 		model:SetAttribute("Large", large)
 		table.insert(items, {
@@ -359,6 +416,16 @@ function Map.furniture(world: any): { any }
 			Model = model,
 			Root = root,
 			Prompt = prompt,
+			Prompts = prompts,
+			Handles = handles,
+			Label = text,
+			Slots = {},
+			LiftVotes = {},
+			LastSafe = root.CFrame,
+			SafeAt = 0,
+			TurnAt = 0,
+			EffectAt = 0,
+			CalmUntil = 0,
 			Carriers = {},
 			Delivered = false,
 			Angle = 0,

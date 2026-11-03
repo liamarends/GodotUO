@@ -21,6 +21,7 @@ for token, path in {
     'RULES': 'shared/Rules.luau',
     'INVENTORY': 'server/Inventory.luau',
     'GAME': 'server/Game.luau',
+    'FURNITURE': 'server/Furniture.luau',
 }.items():
     source = root.joinpath('src', path).read_text(encoding='utf-8')
     fixture = fixture.replace(f'-- INSERT_{token}', source)

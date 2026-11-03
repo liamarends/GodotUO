@@ -8,6 +8,7 @@ local Config, Rules = require(Shared.GameConfig), require(Shared.Rules)
 local Map = require(script.Parent.Map)
 local Furniture = require(script.Parent.Furniture)
 local Monster = require(script.Parent.Monster)
+local House = require(script.Parent.House)
 local Inventory = require(script.Parent.Inventory)
 local Cosmetics = require(script.Parent.Cosmetics)
 local Game = {}
@@ -53,6 +54,8 @@ function Game.new(world: any, action: RemoteEvent, event: RemoteEvent): any
 	self.Furniture = Furniture.new(world, self)
 	self.Furniture:reset()
 	self.Monster = Monster.new(world, self)
+	self.House = House.new(world, self)
+	self.Optional, self.DepartVotes, self.Report = 0, {}, {}
 	self.Inventory:installReceiptHandler()
 	pcall(function()
 		PhysicsService:RegisterCollisionGroup("Movers")
@@ -135,6 +138,14 @@ end
 function Game.personal(self: any, player: Player)
 	local stats = self.Participants[player]
 	self.Event:FireClient(player, "Personal", {
+		Equipment = if stats
+			then stats.Equipment
+			else (player:GetAttribute("Equipment") or "Decoy"),
+		ToolCooldown = if stats
+			then math.max(0, math.ceil((stats.ToolAt or 0) - os.clock()))
+			else 0,
+		LiftReady = self.Furniture.Carrying[player] ~= nil
+			and self.Furniture.Carrying[player].LiftVotes[player] == true,
 		Inventory = self.Inventory:snapshot(player),
 		CanShop = self:canShop(player),
 		Participant = stats ~= nil,
@@ -159,21 +170,40 @@ end
 function Game.broadcast(self: any)
 	local checklist = {}
 	for _, item in self.Furniture.Items do
-		table.insert(
-			checklist,
-			{ Name = item.Name, Delivered = item.Delivered, Large = item.Large }
-		)
+		table.insert(checklist, {
+			Name = item.Name,
+			Delivered = item.Delivered,
+			Large = item.Large,
+			Required = item.Required,
+			Hint = item.Hint,
+		})
 	end
 	local supplier = self.Boost or self.Selected
-	local onTruck, crew = 0, 0
+	local onTruck, crew, votes = 0, 0, 0
+	local teammates = {}
 	for player, stats in self.Participants do
 		crew += 1
+		table.insert(teammates, {
+			Name = player.DisplayName,
+			Status = if stats.Downed
+				then "NEEDS HELP"
+				elseif stats.Hidden then "hidden"
+				else "moving",
+		})
+		if self.DepartVotes[player] and self.DepartVotes[player] > os.clock() then
+			votes += 1
+		end
 		local hrp = root(player)
 		if hrp and not stats.Downed and Map.inTruck(self.World, hrp.Position) then
 			onTruck += 1
 		end
 	end
 	self.Event:FireAllClients("State", {
+		Awareness = Rules.awareness(self.Noise, self.Monster.Hunting),
+		Optional = self.Optional,
+		Votes = votes,
+		Teammates = teammates,
+		Report = self.Report,
 		Phase = self.Phase,
 		Time = math.max(0, math.ceil(self.Deadline - os.clock())),
 		Noise = math.floor(self.Noise),
@@ -279,6 +309,9 @@ function Game.leave(self: any, player: Player)
 		self.Selected = nil
 	end
 	self.Rates[player], self.HideCooldown[player] = nil, nil
+	if self.DepartVotes then
+		self.DepartVotes[player] = nil
+	end
 	-- Already queued write-through rewards/receipts finish even after a disconnect.
 	self.Inventory.Owned[player.UserId] = nil
 end
@@ -331,8 +364,12 @@ function Game.beginRound(self: any)
 	for index, player in candidates do
 		local hrp = root(player)
 		if hrp then
+			player:SetAttribute("SprintIntent", false)
 			player.Character:PivotTo(self.World.Spawn * CFrame.new((index - 1) * 3, 0, 0))
 			self.Participants[player] = {
+				Equipment = player:GetAttribute("Equipment") or "Decoy",
+				ToolAt = 0,
+				PingAt = 0,
 				Active = 0,
 				Carry = 0,
 				Deliveries = 0,
@@ -349,6 +386,8 @@ function Game.beginRound(self: any)
 	end
 	self.StartCount = #candidates
 	self.Required = Config.DeliveryTargets[self.StartCount]
+	self.DepartVotes = {}
+	self.House:reset()
 	local selected = self.Selected
 	if selected and table.find(candidates, Players:GetPlayerByUserId(selected.UserId)) then
 		local activated = false
@@ -391,9 +430,9 @@ function Game.beginRound(self: any)
 		end)
 	end
 	self:announce(
-		"Load any "
+		"Load the "
 			.. self.Required
-			.. " labeled items. Then get EVERY remaining mover into the truck!"
+			.. " CONTRACT items on your checklist. Optional keepsakes earn cosmetic stamps. Everyone must confirm departure at the truck."
 	)
 end
 
@@ -403,6 +442,27 @@ function Game.finish(self: any, won: boolean, reason: string)
 	end
 	self.Phase, self.Deadline, self.Result = "Results", os.clock() + Config.ResultsSeconds, reason
 	self.Monster:reset()
+	local reward = Rules.reward(self.Delivered, self.Optional, won)
+	self.Report.Reward = reward
+	local rescues = 0
+	for _, stats in self.Participants do
+		rescues += stats.Rescues
+	end
+	self.Report.Rescues = rescues
+	self.Result = reason
+		.. " · "
+		.. self.Delivered
+		.. " contract / "
+		.. self.Optional
+		.. " keepsakes · "
+		.. rescues
+		.. " rescues · "
+		.. reward
+		.. " stamps for qualifying movers. Loudest: "
+		.. self.Report.Accident
+		.. " ("
+		.. self.Report.Loudest
+		.. "). Furniture complaints go in the suggestion coffin."
 	for player, stats in self.Participants do
 		self.Furniture:release(player, false)
 		if stats.Hidden then
@@ -430,7 +490,7 @@ function Game.finish(self: any, won: boolean, reason: string)
 		if qualifies and Config.Stage == 3 then
 			local uid, id = player.UserId, self.RoundId
 			self:queueSave("attempt" .. id .. uid, function()
-				return self.Inventory:complete(uid, id, true)
+				return self.Inventory:complete(uid, id, true, reward)
 			end)
 			self:notify(
 				player,
@@ -447,17 +507,33 @@ function Game.finish(self: any, won: boolean, reason: string)
 end
 
 function Game.delivered(self: any, item: any, carriers: { Player })
-	self.Delivered += 1
-	Map.loadedCargo(self.World, self.Delivered)
+	if item.Required then
+		self.Delivered += 1
+	else
+		self.Optional += 1
+	end
+	Map.loadedCargo(self.World, self.Delivered + self.Optional)
+	if not item.Required then
+		self:announce(item.Story or "A family memory found a new home.")
+	end
 	for _, player in carriers do
 		local stats = self.Participants[player]
 		if stats then
 			stats.Deliveries += 1
 		end
 	end
-	self:announce(item.Name .. " loaded! " .. self.Delivered .. "/" .. self.Required)
+	self:announce(
+		item.Name
+			.. " loaded! "
+			.. self.Delivered
+			.. "/"
+			.. self.Required
+			.. (if item.Required then " contract" else " · optional keepsake")
+	)
 	if self.Delivered >= self.Required then
-		self:announce("Checklist complete. Everyone into the truck to escape!")
+		self:announce(
+			"Contract complete. Everyone aboard, then each mover confirms DEPART. Optional keepsakes are your choice."
+		)
 	end
 end
 
@@ -467,8 +543,12 @@ function Game.addNoise(self: any, amount: number, category: string, pos: Vector3
 	end
 	local key = if self.Boost then self.Boost.Key else nil
 	local strength = if key then Config.Catalog[key].Strength else 0
-	self.Noise = math.clamp(self.Noise + Rules.noise(amount, category, key, strength), 0, 100)
-	self.Monster.Investigate = pos
+	local actual = Rules.noise(amount, category, key, strength)
+	self.Noise = math.clamp(self.Noise + actual, 0, 100)
+	self.House:noise(actual, category, pos)
+	if amount >= 3 or category == "Decoy" or not self.Monster.Hunting then
+		self.Monster.Investigate = pos
+	end
 	if category == "Furniture" then
 		self.Event:FireAllClients("Sound", { Kind = "Bump", Position = pos })
 	end
@@ -620,6 +700,59 @@ function Game.action(self: any, player: Player, verb: any, value: any, extra: an
 		end
 	elseif verb == "Start" then
 		self:start()
+	elseif verb == "Depart" then
+		local hrp = root(player)
+		if not self:canAct(player) or not hrp or not Map.inTruck(self.World, hrp.Position) then
+			return
+		end
+		self.DepartVotes[player] = if self.DepartVotes[player]
+				and self.DepartVotes[player] > now
+			then nil
+			else now + Config.DepartureVoteSeconds
+		self:notify(
+			player,
+			if self.DepartVotes[player]
+				then "Departure approved for 12s. Every mover must board and approve; tap again to cancel."
+				else "Departure vote canceled."
+		)
+	elseif
+		verb == "Equipment"
+		and type(value) == "string"
+		and table.find(Config.Equipment, value)
+	then
+		local hrp = root(player)
+		if not hrp or (hrp.Position - self.World.Spawn.Position).Magnitude > 25 then
+			return
+		end
+		local stats = self.Participants[player]
+		if
+			self.Phase == "Playing"
+			and (not self:canAct(player) or self.Furniture.Carrying[player])
+		then
+			return
+		end
+		player:SetAttribute("Equipment", value)
+		if stats then
+			stats.Equipment = value
+		end -- Keep ToolAt: swapping cannot reset cooldowns.
+		self:notify(player, "Free equipment: " .. value .. ". Exchange at the truck anytime.")
+	elseif verb == "UseTool" then
+		self.House:equipment(player)
+	elseif verb == "Lift" then
+		self.Furniture:lift(player)
+	elseif verb == "RecoverLoad" then
+		self.Furniture:recover(player)
+	elseif verb == "Ping" and (value == "Hold" or value == "Turn" or value == "Put down") then
+		local stats, hrp = self.Participants[player], root(player)
+		if not self:canAct(player) or not hrp or now < (stats.PingAt or 0) then
+			return
+		end
+		local repeated = now - (stats.PingAt or 0) < 5
+		stats.PingAt = now + Config.PingCooldown
+		self.House:cue("Ping", player.DisplayName .. ": " .. value, hrp.Position)
+		if repeated then
+			self:addNoise(3, "Ping", hrp.Position)
+		end
 	elseif verb == "Drop" then
 		self.Furniture:release(player, true)
 	elseif verb == "Rotate" then
@@ -628,6 +761,7 @@ function Game.action(self: any, player: Player, verb: any, value: any, extra: an
 		local stats = self.Participants[player]
 		if stats then
 			stats.Sprint = value
+			player:SetAttribute("SprintIntent", value)
 		end
 	elseif verb == "LeaveHide" then
 		local stats = self.Participants[player]
@@ -729,7 +863,9 @@ function Game.step(self: any, dt: number)
 		hum.WalkSpeed = if stats.Downed or stats.Hidden
 			then 0
 			elseif item then (if item.Large and self:crewCount() == 1
-				then Config.SoloDragSpeed
+				then (if stats.Equipment == "Dolly"
+					then Config.SoloDragSpeed + 2
+					else Config.SoloDragSpeed)
 				else Config.CarrySpeed)
 			elseif stats.Sprint then Config.SprintSpeed
 			else Config.WalkSpeed
@@ -751,7 +887,8 @@ function Game.step(self: any, dt: number)
 			if os.clock() - stats.LastStep > (if stats.Sprint and not item then 0.45 else 0.85) then
 				stats.LastStep = os.clock()
 				self:addNoise(
-					if stats.Sprint and not item then Config.Noise.Sprint else Config.Noise.Walk,
+					(if stats.Sprint and not item then Config.Noise.Sprint else Config.Noise.Walk)
+						* self.House:footstep(hrp.Position),
 					"Footstep",
 					hrp.Position
 				)
@@ -785,27 +922,12 @@ function Game.step(self: any, dt: number)
 	self.Furniture:step(dt)
 	self.Noise = math.max(0, self.Noise - Config.Noise.Decay * dt)
 	self.Monster:step()
-	if
-		self.Noise >= Config.Noise.Medium
-		and not self.Monster.Hunting
-		and os.clock() - self.LastAmbience > 7
-	then
-		self.LastAmbience = os.clock()
-		self.Event:FireAllClients("Ambience", self.World.MonsterSpawn.Position)
-		for _, light in self.World.Lights do
-			light.Enabled = false
-		end
-		task.delay(0.25, function()
-			for _, light in self.World.Lights do
-				light.Enabled = true
-			end
-		end)
-	end
+	self.House:step(dt)
 	if os.clock() - self.LastContract > 35 then
 		self.LastContract = os.clock()
 		self:announce(Config.Contracts[math.random(1, #Config.Contracts)])
 	end
-	local alive, aboard, crew, recovering = 0, 0, 0, false
+	local alive, aboard, crew, recovering, votes = 0, 0, 0, false, 0
 	for player, stats in self.Participants do
 		crew += 1
 		if not stats.Downed then
@@ -817,14 +939,25 @@ function Game.step(self: any, dt: number)
 		local hrp = root(player)
 		if hrp and not stats.Downed and Map.inTruck(self.World, hrp.Position) then
 			aboard += 1
+			if self.DepartVotes[player] and self.DepartVotes[player] > os.clock() then
+				votes += 1
+			end
+		else
+			self.DepartVotes[player] = nil
 		end
 	end
 	if crew == 0 then
 		self:finish(false, "The crew left. No invoice was issued.")
 	elseif alive == 0 and not recovering then
 		self:finish(false, "The whole crew needs a nap. Try again for free.")
-	elseif self.Delivered >= self.Required and aboard == crew then
-		self:finish(true, "Everyone escaped with the furniture!")
+	elseif Rules.departure(crew, aboard, votes) then
+		local won = self.Delivered >= self.Required
+		self:finish(
+			won,
+			if won
+				then "Everyone escaped with the contract!"
+				else "Early departure: fewer stamps, all movers safe."
+		)
 	elseif os.clock() >= self.Deadline then
 		self:finish(false, "Seven minutes are up. The house kept the deposit.")
 	end

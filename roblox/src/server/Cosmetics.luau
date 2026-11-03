@@ -69,6 +69,19 @@ function Cosmetics.apply(player: Player, snapshot: any)
 			end
 		end
 	end
+	local earned = head:FindFirstChild("MemoryBadge")
+	if earned then
+		earned:Destroy()
+	end
+	if snapshot.Badge and (snapshot.Mementos or 0) >= Config.CosmeticRewardStep then
+		local tag = Instance.new("BillboardGui")
+		tag.Name, tag.Size, tag.StudsOffset, tag.MaxDistance, tag.Parent =
+			"MemoryBadge", UDim2.fromOffset(170, 22), Vector3.new(0, 2.5, 0), 50, head
+		local text = Instance.new("TextLabel")
+		text.Size, text.BackgroundTransparency, text.TextScaled = UDim2.fromScale(1, 1), 1, true
+		text.Text, text.TextColor3, text.Parent =
+			"MEMORY KEEPER", Color3.fromRGB(120, 220, 194), tag
+	end
 	local oldTag = head:FindFirstChild("SupporterTag")
 	if oldTag then
 		oldTag:Destroy()

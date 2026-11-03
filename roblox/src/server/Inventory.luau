@@ -30,6 +30,8 @@ local function decode(raw: any): any
 			and raw.progress < Config.AttemptsPerFreeUse,
 		"Invalid reward progress"
 	)
+	raw.mementos = raw.mementos or 0
+	raw.badge = raw.badge == true
 	raw.pending = raw.pending or {}
 	return raw
 end
@@ -134,6 +136,8 @@ end
 function Inventory.snapshot(self: any, player: Player): any
 	local data = self.Cache[player.UserId]
 	return {
+		Mementos = if data then data.mementos else 0,
+		Badge = data ~= nil and data.badge == true,
 		Ready = data ~= nil,
 		Memory = self.Memory,
 		OwnsCrew = self.Owned[player.UserId] == true,
@@ -178,13 +182,16 @@ function Inventory.complete(
 	self: any,
 	userId: number,
 	roundId: string,
-	meaningful: boolean
+	meaningful: boolean,
+	mementos: number?
 ): boolean
 	if not meaningful then
 		return true
 	end
 	local ok = self:update(userId, function(data: any)
-		Rules.completeAttempt(data, roundId, meaningful, Config.AttemptsPerFreeUse)
+		if Rules.completeAttempt(data, roundId, meaningful, Config.AttemptsPerFreeUse) then
+			data.mementos = (data.mementos or 0) + math.max(0, math.floor(mementos or 0))
+		end
 	end)
 	return ok
 end
@@ -202,6 +209,17 @@ function Inventory.choose(self: any, player: Player, key: string)
 end
 
 function Inventory.cosmetic(self: any, player: Player, field: string, value: any)
+	if field == "badge" and type(value) == "boolean" then
+		local ok = self:update(player.UserId, function(data: any)
+			if (data.mementos or 0) >= Config.CosmeticRewardStep then
+				data.badge = value
+			end
+		end)
+		if not ok then
+			self.Notify(player, "Could not save your earned badge.")
+		end
+		return
+	end
 	if not self.Owned[player.UserId] then
 		return
 	end

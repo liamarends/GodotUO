@@ -51,8 +51,8 @@ local services = {
 	HttpService = { GenerateGUID = function() return "round-fixture" end }, PhysicsService = {},
 }
 local game = { GetService = function(_, name) assert(services[name], name); return services[name] end }
-local script = { Parent = { Map = "Map", Furniture = "Furniture", Monster = "Monster", Inventory = "Inventory", Cosmetics = "Cosmetics" } }
-local loaded = { Config = Config, Rules = Rules, Map = {}, Furniture = {}, Monster = {}, Cosmetics = {} }
+local script = { Parent = { Map = "Map", Furniture = "Furniture", Monster = "Monster", Inventory = "Inventory", Cosmetics = "Cosmetics", House = "House" } }
+local loaded = { Config = Config, Rules = Rules, Map = {}, Furniture = {}, Monster = {}, Cosmetics = {}, House = {} }
 local require = function(name) assert(loaded[name], name); return loaded[name] end
 local Enum = { ProductPurchaseDecision = { PurchaseGranted = "granted", NotProcessedYet = "pending" } }
 local task = { wait = function() end, spawn = function(fn) fn() end }
@@ -212,7 +212,7 @@ end)
 
 -- Server activation arbitration uses the actual Game methods, with only world objects stubbed.
 local function player(id)
-	local p = { UserId = id, DisplayName = "Crew" .. id, Parent = Players, SetAttribute = function() end }
+	local p = { UserId = id, DisplayName = "Crew" .. id, Parent = Players, GetAttribute = function() return nil end, SetAttribute = function() end }
 	p.Character = { PivotTo = function() end, FindFirstChild = function() return { Position = 0 } end, FindFirstChildOfClass = function() return { Health = 100 } end }
 	playersById[id] = p
 	return p
@@ -224,7 +224,7 @@ local function round()
 	inv:update(1, function() end)
 	inv:update(77, function() end)
 	local g = { Phase = "Lobby", Rates = {}, Inventory = inv, Participants = {}, HideCooldown = {},
-		World = { Spawn = 0 }, Furniture = { reset = function() end, release = function() end }, Monster = { reset = function() end },
+		House = { reset = function() end }, World = { Spawn = 0 }, Furniture = { reset = function() end, release = function() end }, Monster = { reset = function() end },
 		canShop = function() return true end, notify = function() end, announce = function() end,
 		queueSave = function(_, _, operation) assert(operation()) end }
 	return setmetatable(g, { __index = Game })
@@ -257,5 +257,105 @@ test("only supplier can cancel and purchases do not select boosts", function()
 	assert(g.Selected == nil)
 	assert(marketplace.ProcessReceipt(receipt("buy-no-activate")) == "granted")
 	assert(g.Selected == nil and g.Boost == nil)
+end)
+test("house awareness thresholds and hunt override are readable", function()
+ assert(Rules.awareness(34,false)=="Asleep")
+ assert(Rules.awareness(35,false)=="Stirring")
+ assert(Rules.awareness(70,false)=="Searching")
+ assert(Rules.awareness(0,true)=="Awake")
+end)
+test("contracts select specific unique IDs at each crew scale",function()
+ for _, count in Config.DeliveryTargets do
+  local selected=Rules.contract({12,11,10,9,8,7,6,5,4,3,2,1},count)
+  local n=0;for _ in selected do n+=1 end
+  assert(n==count and selected[12] and not selected[1])
+ end
+end)
+test("departure requires every current mover aboard and consenting",function()
+ assert(not Rules.departure(0,0,0))
+ assert(not Rules.departure(2,1,2))
+ assert(not Rules.departure(2,2,1))
+ assert(Rules.departure(1,1,1) and Rules.departure(4,4,4))
+end)
+test("server departure votes reject distant and inactive movers and can cancel",function()
+ local g=round();g.DepartVotes={};g.canAct=function() return true end
+ loaded.Map.inTruck=function() return false end
+ g:action(first,"Depart");assert(g.DepartVotes[first]==nil)
+ loaded.Map.inTruck=function() return true end
+ g:action(first,"Depart");assert(g.DepartVotes[first]>os.clock())
+ g:action(first,"Depart");assert(g.DepartVotes[first]==nil)
+ g.canAct=function() return false end
+ g:action(first,"Depart");assert(g.DepartVotes[first]==nil)
+end)
+test("early departure and optional keepsakes give smaller cosmetic-only payouts",function()
+ assert(Rules.reward(2,0,false)==2)
+ assert(Rules.reward(2,1,false)==4)
+ assert(Rules.reward(4,1,true)==10)
+end)
+test("cosmetic stamps share the attempt dedup transaction",function()
+ local inv=inventory()
+ local before=stored.u_77.mementos or 0
+ assert(inv:complete(77,"stamps",true,14))
+ assert(inv:complete(77,"stamps",true,14))
+ assert(stored.u_77.mementos==before+14)
+ inv.Owned[77]=false
+ inv:cosmetic({UserId=77},"badge",true)
+ assert(stored.u_77.badge==true)
+ inv:cosmetic({UserId=77},"uniform",3)
+ assert(stored.u_77.uniform~=3)
+end)
+test("earned badge cannot be equipped before earning stamps",function()
+ local inv=inventory();inv:update(222,function() end)
+ inv:cosmetic({UserId=222},"badge",true)
+ assert(not stored.u_222.badge)
+end)
+test("failed cosmetic reward save is retryable without a duplicate",function()
+ local inv=inventory();local before=stored.u_77.mementos
+ mode="ambiguous";assert(not inv:complete(77,"stamps-outage",true,3));mode="ok"
+ assert(inv:complete(77,"stamps-outage",true,3))
+ assert(stored.u_77.mementos==before+3)
+end)
+local workspace={Raycast=function() return nil end}
+local Furniture=(function()
+-- INSERT_FURNITURE
+end)()
+local function point(x)
+ return setmetatable({X=x}, {__sub=function(a,b) return {Magnitude=math.abs(a.X-b.X)} end})
+end
+local function carryFixture()
+ local p={Character={FindFirstChild=function() return {Position=point(0)} end},SetAttribute=function() end}
+ local q={Character={FindFirstChild=function() return {Position=point(0)} end},SetAttribute=function() end}
+ local item={Large=true,Delivered=false,Root={Position=point(0)},Handles={},Slots={},Carriers={},Prompts={{},{}},LiftVotes={},BumpAt=0}
+ local noises=0
+ local g={Phase="Playing",canAct=function() return true end,crewCount=function() return 2 end,notify=function() end,addNoise=function() noises+=1 end,Participants={[p]={Equipment="Decoy"},[q]={Equipment="Wedge"}}}
+ local f=setmetatable({Game=g,Carrying={}}, {__index=Furniture})
+ return f,item,p,q,function() return noises end
+end
+test("two carriers claim distinct handles and cannot duplicate pickups",function()
+ local f,item,p,q=carryFixture()
+ f:pickup(p,item,1);f:pickup(p,item,2);f:pickup(q,item,1)
+ assert(#item.Carriers==1)
+ f:pickup(q,item,2);assert(#item.Carriers==2 and not item.Prompts[1].Enabled and not item.Prompts[2].Enabled)
+end)
+test("server rejects distant and obstructed furniture claims",function()
+ local f,item,p=carryFixture();item.Root.Position=point(50)
+ f:pickup(p,item,1);assert(#item.Carriers==0)
+ item.Root.Position=point(0);workspace.Raycast=function() return true end
+ f:pickup(p,item,1);assert(#item.Carriers==0)
+ workspace.Raycast=function() return nil end
+end)
+test("release clears handle and lift readiness while preserving partner",function()
+ local f,item,p,q=carryFixture();f:pickup(p,item,1);f:pickup(q,item,2)
+ f:lift(p);assert(item.LiftVotes[p]);f:release(p,false)
+ assert(f.Carrying[p]==nil and item.Slots[1]==nil and item.LiftVotes[p]==nil)
+ assert(item.Carriers[1]==q and item.Prompts[1].Enabled)
+end)
+test("collision cooldown suppresses repeated noise events",function()
+ local f,item,_,_,count=carryFixture()
+ f:bump(item);f:bump(item);assert(count()==1)
+end)
+test("delivered objects cannot be claimed again",function()
+ local f,item,p=carryFixture();item.Delivered=true;f:pickup(p,item,1)
+ assert(#item.Carriers==0 and f.Carrying[p]==nil)
 end)
 print(string.format("%d regression cases passed. Mock services only; Studio/live-platform checks remain required.", tests))

@@ -48,8 +48,8 @@ See [game testing](../roblox/TESTING.md), [game setup](../roblox/README.md) and
 
 Full furniture/monster gameplay, multiplayer carrying, mobile controls, live
 DataStore/purchases, recording and soak behavior need explicit runtime evidence.
-The prior HUD inset correction also needs visual rechecking. The later creative
-expansion brief is requested work, not an implemented or tested feature list.
+The prior HUD inset correction also needs visual rechecking. The living-house slice is now implemented in source; its new gameplay still needs
+Studio evidence. Room rearrangement and additional houses remain deferred.
 
 ## Maintenance rule
 
@@ -60,3 +60,23 @@ Correct superseded conclusions rather than accumulating contradictions.
 Keep entries concise; put detailed procedures in the existing guides and link
 them. Never store credentials, personal machine paths, private player data,
 raw session logs or hidden reasoning. Separate observed facts from hypotheses.
+
+## 2026-11-02 — living-house implementation
+
+- Specific contract IDs replace the arbitrary quota; optional items do not advance
+  required delivery progress. Unanimous, expiring departure consent replaces
+  automatic escape, including early departure with smaller cosmetic rewards.
+- Large loads claim separate handles; release clears slot and lift votes. Nearby
+  recovery is capped at 12 studs. Do not revert to trusting prompt distance alone.
+- Cosmetic stamps share the existing idempotent attempt transaction. They never
+  affect paid balances or pass ownership. Equipment exchange retains cooldowns.
+- House incidents and one complication per selected object use countermeasures,
+  cooldowns and conservative door clearance. Watch checks use server avatar facing,
+  not camera knowledge. Do not describe the mirror as a real reflection renderer.
+- Validated: 11 sources compiled, 34 actual-rule/service regression cases, pinned
+  Roblox type analysis, StyLua, Rojo place build, documentation links and privacy
+  scan. See [living-house scope](../roblox/LIVING-HOUSE.md) and updated
+  [manual scenarios](../roblox/TESTING.md).
+- Studio window discovery worked, but file-dialog automation returned unusable
+  element indexes; no fresh runtime pass was established. Static compilation and
+  mocked claim tests do not prove physical carrying or mobile layout.

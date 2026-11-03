@@ -13,6 +13,8 @@ export type Profile = {
 	uniform: number,
 	flashlight: number,
 	supporter: boolean,
+	mementos: number,
+	badge: boolean,
 }
 function Rules.newProfile(): Profile
 	return {
@@ -27,6 +29,8 @@ function Rules.newProfile(): Profile
 		uniform = 0,
 		flashlight = 1,
 		supporter = false,
+		mementos = 0,
+		badge = false,
 	}
 end
 function Rules.isBoost(key: any): boolean
@@ -93,5 +97,26 @@ function Rules.noise(amount: number, category: string, boost: string?, strength:
 		return amount * (1 - strength)
 	end
 	return amount
+end
+function Rules.awareness(noise: number, hunting: boolean): string
+	return if hunting
+		then "Awake"
+		elseif noise >= 70 then "Searching"
+		elseif noise >= 35 then "Stirring"
+		else "Asleep"
+end
+-- Stable shuffled IDs produce specific objectives without making every heavy item mandatory.
+function Rules.contract(order: { number }, count: number): { [number]: boolean }
+	local chosen: { [number]: boolean } = {}
+	for i = 1, math.min(count, #order) do
+		chosen[order[i]] = true
+	end
+	return chosen
+end
+function Rules.departure(crew: number, aboard: number, votes: number): boolean
+	return crew > 0 and aboard == crew and votes == crew
+end
+function Rules.reward(requiredLoaded: number, optionalLoaded: number, won: boolean): number
+	return math.max(0, requiredLoaded) + math.max(0, optionalLoaded) * 2 + (if won then 4 else 0)
 end
 return Rules
