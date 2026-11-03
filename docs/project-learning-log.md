@@ -80,3 +80,25 @@ raw session logs or hidden reasoning. Separate observed facts from hypotheses.
 - Studio window discovery worked, but file-dialog automation returned unusable
   element indexes; no fresh runtime pass was established. Static compilation and
   mocked claim tests do not prove physical carrying or mobile layout.
+
+## 2026-11-02 — Studio UI smoke test and repairs
+
+- Opened the living-house place in Studio and started a solo client. Observed
+  the lobby, avatar, truck/house exterior, countdown, running seven-minute timer,
+  checklist, tools panel and an incident subtitle. Output showed server ready
+  with no errors during the inspected first session.
+- Fixed two visible defects: the checklist incorrectly said to load any items
+  despite specific required IDs, and rotation arrows rendered as missing glyphs.
+  Rebuilt, reopened and visually verified required/optional wording and readable
+  Left/Right buttons in a second solo session.
+- Tested Studio-memory shop selection: Soft Soles stayed at three uses when
+  offered, then became two with the team boost active at gameplay start. No
+  purchase prompt, live receipt or DataStore was exercised.
+- All 11 sources compiled; all 34 mocked regression cases passed; formatting
+  and Rojo assembly passed after the changes. Desktop UI observations are not
+  mobile evidence. Sustained walking could not be driven reliably through the
+  available controller; delivery, hunts, multiplayer, complete rounds and replay
+  remain unverified. The controller rejects held-key duration on Windows.
+- File Explorer opening and Studio Ctrl+O/text entry eventually worked. Opening
+  a place created a new native window: rediscover its ID before further actions.
+  Immediate AX observations sometimes preceded the visible transition.

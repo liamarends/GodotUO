@@ -434,10 +434,10 @@ local controls = frame(
 	UDim2.fromOffset(196, 204),
 	colors.Panel
 )
-button(controls, "Turn ↶ [R]", UDim2.fromOffset(7, 6), UDim2.fromOffset(88, 42), function()
+button(controls, "Left [R]", UDim2.fromOffset(7, 6), UDim2.fromOffset(88, 42), function()
 	action:FireServer("Rotate", -1)
 end)
-button(controls, "Turn ↷ [T]", UDim2.fromOffset(101, 6), UDim2.fromOffset(88, 42), function()
+button(controls, "Right [T]", UDim2.fromOffset(101, 6), UDim2.fromOffset(88, 42), function()
 	action:FireServer("Rotate", 1)
 end)
 button(controls, "Put down [G]", UDim2.fromOffset(7, 55), UDim2.fromOffset(182, 42), function()
@@ -690,7 +690,8 @@ event.OnClientEvent:Connect(function(kind: string, data: any)
 			elseif state.Noise >= Config.Noise.Medium then colors.Orange
 			else colors.Teal
 		startButton.Visible = state.Phase == "Lobby"
-		local lines = { "LOAD ANY " .. state.Required .. " ITEMS · [2] = two movers\n" }
+		local lines =
+			{ "LOAD " .. state.Required .. " [REQ] ITEMS\n[OPT] = bonus · [2] = two movers\n" }
 		for _, item in state.Checklist do
 			table.insert(
 				lines,

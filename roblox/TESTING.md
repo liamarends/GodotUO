@@ -2,6 +2,28 @@
 
 ## Checks actually run
 
+### Latest Studio UI check — November 2, 2026
+
+Tested the living-house revision `53a3084` plus the UI repairs in this change,
+using local generated places, one Studio client and Studio-memory inventory.
+Observed lobby rendering, countdown and running round timer, checklist/tools
+panels and incident subtitles. Inspected Output in the first session: server
+ready, no runtime errors shown. Reopened the corrected place and visually
+confirmed the required-item checklist heading and readable Left/Right controls.
+The HUD no longer overlaps the Roblox menu in the observed desktop viewports.
+
+In the second session, opened the supply desk and offered Soft Soles: inventory
+remained at three. Starting the round activated the named team boost and reduced
+only Soft Soles to two; Padding remained three. Shop displayed Studio demo/no
+purchase controls. These observations do not test Robux purchases or persistence.
+
+Recompiled 11 files, passed 34 mocked regression cases, formatting and Rojo build.
+Sustained movement input could not be driven reliably by the Windows controller;
+no delivery, monster encounter, complete round, replay, multiplayer or mobile
+pass is claimed. Studio Script Analysis was not inspected in this session.
+
+### Earlier prototype checks
+
 - All 10 shipped Luau files compiled with the official **Luau 0.745** compiler.
 - **21 regression cases passed**, executing shipped Rules, Inventory and Game
   code with deterministic service doubles: duplicate/cross-server receipts,
