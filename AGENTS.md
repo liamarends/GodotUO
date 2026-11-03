@@ -105,3 +105,11 @@ authorize installing plugins, running every milestone, or publishing anything.
 Keep concise handoffs in ignored `production/session-state/active.md`.
 Generated places, logs and captures go in ignored `build/` or a task-provided
 external folder. Reviewed source assets and fixtures keep their own paths.
+
+## Durable project memory
+
+Read `docs/project-learning-log.md` at the start of project work. After meaningful
+work, update it with reusable findings, decisions, regression lessons, checks
+actually performed and outstanding gaps. Link evidence and correct outdated
+entries. Do not record secrets, personal paths, raw transcripts or speculate that
+unrun tests passed. Include these updates in the task's GitHub changes when authorized.
