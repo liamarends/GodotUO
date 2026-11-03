@@ -18,3 +18,5 @@ Open the prepared single-avatar scene, select Mayu Blue in **VRChat SDK → Show
 
 ## Working scene
 Open `Assets/Mayu Blue.unity`. The regular Tora has its own name, a cleared blueprint ID, and the source outfit meshes initially hidden. Clothing and its setup remain under `Clothes Updated`. The project contains the rig and body, an alternate ear mesh, and clothing. A separate layered hair mesh did not appear in the inspected Tora hierarchy. The recolor uses the included Tora stripe pattern, so the chest and paw markings differ from the screenshots. The Windows preview was rendered in the Unity editor.
+
+**Build checkpoint.** The Windows SDK build reached shader compilation and was stopped at the owner's request. The scene and preview were saved. A completed Windows bundle, in-client test and upload are still pending.
