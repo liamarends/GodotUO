@@ -8,7 +8,7 @@ Open **Expressions** in VRChat. These paths were read from the merged menu durin
 
 | Item | Path from Expressions |
 | --- | --- |
-| Emo Hair | Appearance → Hair → Emo Hair |
+| Emo Hair | Emo Hair (first item on the main page) |
 | Round Glasses | Clothes → Accessories → Glasses → On |
 | Gothic Accessories | Clothes → Accessories → Goth |
 | 9 Volt Battery | Items → Gothic → 9 Volt |
@@ -17,7 +17,7 @@ Open **Expressions** in VRChat. These paths were read from the merged menu durin
 | Thrift Clothes | Clothes → Next → Thrift Clothes |
 | Soft Lounge | Clothes → Next → Soft Lounge |
 | SoftBoy Fit | Clothes → Next → SoftBoy Fit |
-| Comfy Sweatshirt outfit | Next → [SoapBlocc] → ComfyOutfit |
+| Comfy Sweatshirt outfit | Clothes → Fishbone Sweatshirt / Comfy Pants / Comfy Cat Print |
 | Ripper Claw-X, both arms | Next → Cyber Arm → Equip Ripper Claws |
 | GhostStep Mk.IV | Next → Cyber Legs → Equip GhostStep |
 | The Cheshire | Next → TheChesh → Chesh On |
@@ -44,3 +44,9 @@ Open `Assets/Mayu Blue - Wheel Fitted.unity` for the fitted version. The PC loca
 The original Mayu Tora PC prefab supplied the target hip contour. Matching the corresponding UV surface samples preserves the edited Tora’s rig and blendshapes. At 0.67 m above the avatar origin the earlier rear contour was 0.1586 m behind the origin. Both the stock mesh and the fitted export measure approximately 0.1377 m there. The glasses were moved 0.061 m back along the avatar’s forward axis through a head-mounted offset so their existing control can still move them relative to the new position.
 
 The Ripper Claws and GhostStep equip actions drive separate alpha cutouts using the creators’ masks. Front renders of the exported body verified arms only, legs only, both on and both off. Outfit geometry was inspected at rest and with the head, elbows and knees rotated. A live VRChat wear test is still needed for tracking, PhysBones and interactive prop constraints.
+
+## Clothing repair and first-page hair
+
+The Windows update was verified on the existing private listing, version 7. In the fitted avatar, **Emo Hair** is the first control in Expressions. **Clothes** contains independent **Fishbone Sweatshirt** and **Comfy Pants** switches, plus **Comfy Cat Print**. The original outfit imported an FX controller with animation paths rooted at `[S]OutfitFBX`; the fitted avatar uses `[S]OutfitPrefab`. A menu label alone could not establish that its animations reached the correct renderers. The repaired visibility controls reference the actual shirt and pants objects. Both start off.
+
+The pants switch also controls a mask projected from the Mayu body mesh onto its UV atlas. Its blue channel hides the clothed inner-thigh area below the waistband and above the cuffs. The red and green channels still handle the cyber arms and legs independently. Check the packed avatar, including a bent-leg pose, before publishing an outfit repair.
