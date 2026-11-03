@@ -21,3 +21,5 @@ Read docs/roblox-workflow.md and the acceptance criteria. Run only relevant chec
    outcome, actual outcome and errors. Never treat a build as a playtest.
 If Studio or a connector is unavailable, finish offline checks and provide the
 specific manual checks still needed. Do not fabricate screenshots or run status.
+
+Use the doctor and evidence helpers in docs/roblox-agent-kit.md. Real input should demonstrate the player path; fixture setup alone is not gameplay proof.

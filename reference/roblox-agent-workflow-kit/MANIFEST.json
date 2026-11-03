@@ -1,0 +1,250 @@
+{
+  "source_head": "7142d6b63750d782d59dcbfd44d3de4fc8cc4850",
+  "files": [
+    {
+      "path": "AGENT-BOOTSTRAP-PROMPT.md",
+      "bytes": 2209,
+      "sha256": "1e4eb7d069bdf80e66e72fb9cb9055367e6254ffd83748253c1a7a8898f5b000"
+    },
+    {
+      "path": "guides/01-adaptation.md",
+      "bytes": 1786,
+      "sha256": "547c48f5dbdb04b60da06f9063c512a4df8d8f58bfa9b1ef4b50cee471c967e8"
+    },
+    {
+      "path": "guides/02-first-session.md",
+      "bytes": 2399,
+      "sha256": "e58b76839940b3555b8f7b45fb36623bf5104344f5b9c152ad06f64b6b2201ae"
+    },
+    {
+      "path": "guides/03-testing.md",
+      "bytes": 2330,
+      "sha256": "83f03184400c0fc9bea83a502c12799320298fdd3fa43d2c98aadf4e5c511087"
+    },
+    {
+      "path": "guides/04-recording.md",
+      "bytes": 2164,
+      "sha256": "097dc28c071fe1758437265a44a7fa2aea2fd98c7d33b4fea26707fce86cb300"
+    },
+    {
+      "path": "guides/05-automation-contract.md",
+      "bytes": 2790,
+      "sha256": "b3565ddd6c0d2d836ec6e47f25a078b51e345c9d979ca6835095ac3fd4ae3837"
+    },
+    {
+      "path": "reference/GUO/.claude/agents/qa-lead.md",
+      "bytes": 7325,
+      "sha256": "d01ddb9728c7c34778db8c9b3e9fc2a1d64efa792a140573d09946eea69bce32"
+    },
+    {
+      "path": "reference/GUO/.claude/agents/qa-tester.md",
+      "bytes": 9002,
+      "sha256": "73eb6e7fa9921853986d6bc7afbedfb26992a16db1acc01ded754b1a9a10df61"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/bug-report/SKILL.md",
+      "bytes": 5980,
+      "sha256": "2960da7266e446de232a7f46229a9908825b188db4a28d834f030690d646575e"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/code-review/SKILL.md",
+      "bytes": 7643,
+      "sha256": "e0abfa89a0a22bb3cfb9042941efc8f7ffb2a73b4f92884ef8eaba670366ca53"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/playtest-report/SKILL.md",
+      "bytes": 5080,
+      "sha256": "708a99ffe0990079bfe7b34c49a641e6131c32173c966f7c51e588def5e75548"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/qa-plan/SKILL.md",
+      "bytes": 12765,
+      "sha256": "f4e9823754aaad75ff87fe700a826c0953ce9ddf853130e2d6cdf3ba2d3622ba"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/regression-suite/SKILL.md",
+      "bytes": 9232,
+      "sha256": "8f073b6b576c88fba6129efd57f4c71f04c97563f3c5a532c0ae28d2a5c0f0fc"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/smoke-check/SKILL.md",
+      "bytes": 15984,
+      "sha256": "98521191c6dd949bce2df9d4f8d4abeebbc0adf36b665e7a99d7645dc9ed42e3"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/soak-test/SKILL.md",
+      "bytes": 9488,
+      "sha256": "9f090f0e39575265a9e8e5e042dd81af81191e346ed3a92983a8d1d1a5ba6bc1"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/test-evidence-review/SKILL.md",
+      "bytes": 8978,
+      "sha256": "04cdf0b7e94ab2dab58850bf1a70a2a6f33810ea7abb6102eaec8f2d00b9026e"
+    },
+    {
+      "path": "reference/GUO/.claude/skills/test-flakiness/SKILL.md",
+      "bytes": 8163,
+      "sha256": "3849299d9c0b667a2974157a2ce692892bcef475b87e0c20ad029b22f335b805"
+    },
+    {
+      "path": "reference/GUO/docs/upstream/LICENSE-Claude-Code-Game-Studios-MIT",
+      "bytes": 1087,
+      "sha256": "dcc07fdb0ef4e445a80abc493e89c8ff2cd4d51bae067acd03911c77e575ba5d"
+    },
+    {
+      "path": "reference/GUO/launchers/dev/endurance.bat",
+      "bytes": 1390,
+      "sha256": "e3c53a7b93e57109445b5c876aa41b69ff4248510681cb7fc261b1e848d3ca7c"
+    },
+    {
+      "path": "reference/GUO/launchers/dev/playtest.bat",
+      "bytes": 1240,
+      "sha256": "6b560a0a226298e85fdfc758bd00a336a6352d62c0b12ecbad6e97a5b85cdb1d"
+    },
+    {
+      "path": "reference/GUO/launchers/dev/smoke.bat",
+      "bytes": 9303,
+      "sha256": "b5219936471bd4263140e3d9e11b809c69267ada95040f43ea59c5f07e40d212"
+    },
+    {
+      "path": "reference/GUO/LICENSE",
+      "bytes": 2052,
+      "sha256": "838cd3d0153067d1b3d9af6fb40e47d5cbc2b7e7b87da29f88a6df1bbff4cb8f"
+    },
+    {
+      "path": "reference/GUO/tools/guo_mcp/README.md",
+      "bytes": 6564,
+      "sha256": "61e77bdac6cd57223b39809cfb1eb9b2ad834c174fd0909ce6dc0cb7a4497c3d"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/capture.py",
+      "bytes": 4158,
+      "sha256": "654b777aaecee258b1238937cbb89bee7d79133fac412215a2b812a26f0f0820"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/driver.py",
+      "bytes": 32989,
+      "sha256": "e4e712cf38355dd71c14576e4dc9c1885d655b53c8693b7864185cc30f0ced5b"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/events.py",
+      "bytes": 2202,
+      "sha256": "28b09b5e738311b807cafaa95bf787e79cd8ea3fd31f440ecc7324ea9a0e42de"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/README.md",
+      "bytes": 25537,
+      "sha256": "0fd3f57f1aba6ff49c7c65e00a6c21cc75518957ef1356569c3b34f88e937bba"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/redact.py",
+      "bytes": 2098,
+      "sha256": "82d0fa08bb59f4635f9dcb21befe7f92e985243e87179b0d44db69b9c95e8eed"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/scenario.py",
+      "bytes": 8565,
+      "sha256": "c28b855867d846b8ae1c27d1d801c39f4d30b61c9f00a28ec43e6a59f7899586"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/test_run.py",
+      "bytes": 44390,
+      "sha256": "afd0810c39d016a49aed78b7756f4f4c9d9b3300c85e6e8ffd4e7e32dc1d2116"
+    },
+    {
+      "path": "reference/GUO/tools/scenario_run/uiquery.py",
+      "bytes": 2284,
+      "sha256": "cfbf0b12fdf6ffc66fad601598b9acfb238fac7111d17165ff85e03effc5e7f7"
+    },
+    {
+      "path": "reference/GUO/tools/scenarios/README.md",
+      "bytes": 658,
+      "sha256": "05d84a2b8a472565cf93ee2079f5d81f93c87a1d300e495a9179578038a753bc"
+    },
+    {
+      "path": "reference/GUO/tools/scenarios/schema/event.schema.json",
+      "bytes": 1247,
+      "sha256": "839faa3e60b225d4c9bbb63245c778e3d220a095ed3cb791b0ce2cf285d62df6"
+    },
+    {
+      "path": "reference/GUO/tools/scenarios/schema/run.schema.json",
+      "bytes": 2587,
+      "sha256": "3158d17d76adfd40da3975e2b633f171bc4e08e27dd3496d1d071098f26f721d"
+    },
+    {
+      "path": "reference/GUO/tools/scenarios/schema/scenario.schema.json",
+      "bytes": 16727,
+      "sha256": "d9d1959b0c9f032ff5d3680ef657fc2a463dd704aa9e276861f30aac4dcda9fd"
+    },
+    {
+      "path": "reference/README.md",
+      "bytes": 863,
+      "sha256": "fa1004f3da56906f86175334b9f5bbec202fc7ba737da777808526589611e3f7"
+    },
+    {
+      "path": "SOURCES.md",
+      "bytes": 1316,
+      "sha256": "df500fde53877249cb99dc7a67018c699326977a73bd0738645c42267bbba201"
+    },
+    {
+      "path": "START-HERE.md",
+      "bytes": 2035,
+      "sha256": "5c19a03fb4d72df024abe32fe449b8792429beec8b75590b276c6707e3433768"
+    },
+    {
+      "path": "starter/default.project.json",
+      "bytes": 911,
+      "sha256": "b12a2b677025a3da24666c0e0da3f9e6df4336e4e59586d68bf21e39c8f68659"
+    },
+    {
+      "path": "starter/plugin/WorkflowSmoke.plugin.lua",
+      "bytes": 1032,
+      "sha256": "8f16f53e9abcc8d6416499da7c9637866bf7aa4dfe811a0c191033ba37e8340e"
+    },
+    {
+      "path": "starter/tests/SpawnSmoke.server.lua",
+      "bytes": 1438,
+      "sha256": "9c8db2037b5b48221a336ca8a86b32a933e006fd8d1a729a238b9cc09f890df1"
+    },
+    {
+      "path": "templates/AGENTS.roblox.md",
+      "bytes": 2555,
+      "sha256": "42edfa06202823bafa063f546d3d87ebf8500025593820f10b9653e03b05bfcd"
+    },
+    {
+      "path": "templates/capability-checklist.md",
+      "bytes": 1464,
+      "sha256": "363accc04ca8a63dd27185526192755a666b50dfd93a5d37b3d9d91cb3a249c3"
+    },
+    {
+      "path": "templates/handoff.md",
+      "bytes": 354,
+      "sha256": "7f3560446da72746b5751e6fad14904f4c5ce8f968cbb4f62366d3d52e48f5d5"
+    },
+    {
+      "path": "templates/scenario.example.json",
+      "bytes": 1108,
+      "sha256": "69191048db6447f934de617e56a566768ce712f0a092b0d66f9b18b5dc788c75"
+    },
+    {
+      "path": "tools/README.md",
+      "bytes": 992,
+      "sha256": "03057d85f12a7d47677f7350355087f36d819cf9001235ba9afa1b016851ac15"
+    },
+    {
+      "path": "tools/record_window.py",
+      "bytes": 2632,
+      "sha256": "a357bf45488283fc643d043204ca9e376a3993030de30fa60571c08f72eb72f0"
+    },
+    {
+      "path": "tools/run_evidence.py",
+      "bytes": 2520,
+      "sha256": "fea693fda36459d7496a602a04f91b02f505a8c875526772f8492561b2fafd5b"
+    },
+    {
+      "path": "VALIDATION.md",
+      "bytes": 660,
+      "sha256": "36fb809413e6d45d9052d18a049bd907db3ae7ba4c9c4e826a7c823a8c0c0f67"
+    }
+  ]
+}

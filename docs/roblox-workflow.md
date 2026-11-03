@@ -18,7 +18,7 @@ documentation remain reference material; the former automation is archived in
 3. For Codex skill selection, run from the repository root:
    `python tools/agent_skills/run.py`, then
    `python tools/agent_skills/run.py --check` (Python 3.12+).
-   The local link exposes six canonical skills to Codex; Claude uses them directly.
+   The local link exposes seven canonical skills to Codex; Claude uses them directly.
 4. Create a `build` directory and run:
    `rojo build roblox/default.project.json -o build/dont-wake-the-house.rbxlx`.
 5. Open the generated place in Studio and press Play. The server creates the
@@ -127,3 +127,5 @@ identify the actual owner/group, experience/place, source commit, test results,
 asset rights and rollback path. Publishing requires explicit authorization for
 the destination and an available Studio/Creator Hub workflow. This repository
 contains no Roblox credentials and no automatic upload workflow.
+
+For tooling discovery, reproducible logs and window capture, follow the [workflow kit integration](roblox-agent-kit.md) and the roblox-evidence skill.

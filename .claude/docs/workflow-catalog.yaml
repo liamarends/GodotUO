@@ -5,4 +5,5 @@ workflows:
   review: code-review
   test: roblox-test
   evidence: test-evidence-review
+  capture: roblox-evidence
   release: roblox-release

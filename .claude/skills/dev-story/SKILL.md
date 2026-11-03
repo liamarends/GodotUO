@@ -16,3 +16,5 @@ for Studio-dependent evidence when available. Add regression tests for behavior
 fixes using an existing runner; do not invent results when Studio is unavailable.
 Self-review the diff and map criteria to evidence or open gaps. Update an existing
 story honestly. Do not publish the experience as part of routine implementation.
+
+Use roblox-evidence for reproducible logs or player-path recordings relevant to the change. See docs/roblox-agent-kit.md; report unavailable capabilities without blocking unrelated work.

@@ -55,3 +55,4 @@
 
 # Fixtures copied byte for byte from other projects (sha256-checked manifests).
 tools/uopack/fixtures/** -text
+reference/roblox-agent-workflow-kit/** -text

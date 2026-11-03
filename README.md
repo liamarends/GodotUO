@@ -13,7 +13,10 @@ moving furniture without waking The Duvet. Start with the
 ## What is ready
 
 - Six focused roles for Studio, server logic, client/UI, QA, design and review.
-- Six skills for onboarding, implementation, review, testing, evidence and releases.
+- Seven skills for onboarding, implementation, review, testing, evidence capture/review and releases.
+
+The supplied [Roblox Agent Workflow Kit](docs/roblox-agent-kit.md) adds tooling
+discovery, bounded command logs and optional window recording to this workflow.
 - A full prototype in [roblox/](roblox/README.md): generated house/truck, carrying,
   noise, monster, round resets, keyboard/touch HUD and fair optional shop.
 - Saved consumables/free rewards, receipt deduplication, one team boost per round,
