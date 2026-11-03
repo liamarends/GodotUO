@@ -33,3 +33,7 @@ Open **Expressions** in VRChat. These paths were read from the merged menu durin
 ## Version-specific exception
 
 Mayu Adult 0.9 is an FBX patch. Its creator specifies a clean Mayu 2.0 or 2.0.1 source. The active Tora Death Edit is a different, modified model, so that patch was omitted. The Cheshire is a separate prefab with its own menu control.
+
+## Windows build result
+
+The VRChat SDK completed the build. The UnityFS bundle measures 70,835,955 bytes on disk and 346,321,432 bytes of uncompressed block data. The local test copy was verified by SHA-256 against the build. In the PC client, open **Avatars → SDK Test Avatars → Mayu Blue - Wheel**, then open **Expressions**. The compiled FX controller's Ripper Claws action activates the arms mesh and the wrist and elbow hide shapes. The GhostStep action activates the legs and screen meshes and the knee and leg-fluff hide shapes. In-client interaction, fit through the full range of motion, and publication remain untested. [VRChat local avatar testing](https://creators.vrchat.com/avatars/creating-your-first-avatar/)
