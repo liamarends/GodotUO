@@ -10,8 +10,9 @@
 - **Input**: Design for keyboard/mouse and touch; verify gamepad if included by the feature.
   No claim of device support until tested.
 - **Authority**: Server owns shared game rules and saved state. Shared modules are client-readable.
-- **Persistence**: No persistence library or datastore schema selected by this starter.
-  Add only when needed; isolate test experience data from live data.
+- **Persistence**: Inventory.luau owns a versioned per-user DataStore, atomic receipt
+  grants and write-through mutations. No external persistence library. Keep the
+  Studio memory demo and separate test experience isolated from live player data.
 - **Dependencies**: No gameplay framework selected. Do not add Knit, networking wrappers
   or a datastore package merely to satisfy a template.
 - **Naming**: PascalCase ModuleScript names; descriptive camelCase locals/functions;
@@ -19,7 +20,8 @@
 - **Performance**: Measure before assigning budgets. Test client and server costs separately,
   including low-end/mobile targets when in scope. No invented FPS or memory claims.
 - **Testing**: Script Analysis, Test, Server & Clients, device emulation;
-  targeted automated tests when a runner exists. CI currently checks setup/format/build only.
+  targeted tests in roblox/tests/run.py. CI checks setup, formatting, compilation,
+  Roblox-aware types, mocked-service regressions and assembly; never platform playtests.
 - **Specialists**: roblox-studio-specialist, roblox-server-engineer,
   roblox-client-ui-engineer, roblox-qa and lead-programmer.
 - **Documentation**: docs/roblox-workflow.md. Historical Godot ADRs do not govern Roblox design.

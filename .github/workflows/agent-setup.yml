@@ -52,4 +52,4 @@ jobs:
           python tools/agent_skills/run.py
           python tools/agent_skills/run.py --check
       - name: Check fork documentation links
-        run: python tools/docs_lint/run.py AGENTS.md CLAUDE.md README.md docs/fork-workflow.md docs/roblox-workflow.md roblox/README.md tools/agent_skills/README.md .claude/agents .claude/skills
+        run: python tools/docs_lint/run.py AGENTS.md CLAUDE.md README.md docs/fork-workflow.md docs/roblox-workflow.md roblox/README.md roblox/TESTING.md tools/agent_skills/README.md .claude/agents .claude/skills

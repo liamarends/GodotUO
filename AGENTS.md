@@ -4,8 +4,10 @@
 
 The active target is **Roblox Studio + Luau**, maintained in liamarends/GodotUO.
 The repository name is inherited. Work in `roblox/` for experience source.
-This setup adapts development agents and workflows; it does not port the
-ClassicUO C# client to Roblox or include an existing published experience.
+The active game is **Don't Wake the House**, a cooperative moving/horror prototype.
+Read `roblox/README.md` for gameplay, purchase invariants and account setup, and
+`roblox/TESTING.md` for evidence and outstanding Studio checks. This is an original
+Roblox game, not a port of the ClassicUO C# client; it is not yet published.
 
 Godot/C# source, UO tooling and historical docs remain as reference.
 `legacy/godotuo/` preserves the old agent configuration and GitHub workflows.
@@ -55,21 +57,25 @@ experience, alter production data or upload assets unless the task authorizes it
 - `roblox/src/client` → StarterPlayer.StarterPlayerScripts.Client
 - `roblox/src/shared` → ReplicatedStorage.Shared
 
-The starter builds a local place with a baseplate and spawn. It has no place ID,
-monetization, remotes or persistence. Rojo manages mapped source; Studio authors
-scene content. Inspect the sync diff before connecting to an existing place.
+The server builds the original house, truck, props and monster at runtime. Config
+holds balance/catalog values; real product and pass IDs are zero until configured.
+Inventory owns the only ProcessReceipt handler. Preserve atomic receipt/grant
+writes, free-attempt rewards, nonstacking team boosts and Studio-only memory mode.
+Rojo manages mapped source. Inspect sync diffs before connecting existing places.
 
 From the repository root:
 ```text
 python tools/agent_skills/run.py --validate-only
 python -m unittest discover -s tools/agent_skills -p "test_*.py"
 stylua --check --config-path roblox/stylua.toml roblox/src
-rojo build roblox/default.project.json -o build/roblox-starter.rbxlx
+python roblox/tests/run.py
+rojo build roblox/default.project.json -o build/dont-wake-the-house.rbxlx
 ```
 
 Create `build/` before building. Tool versions are in `roblox/tool-versions.json`.
-Rojo builds the place hierarchy; StyLua parses/formats source. Neither runs
-Roblox or proves Luau type correctness. Inspect Script Analysis and Output in
+Rojo builds the place hierarchy; StyLua parses/formats source. CI also compiles
+Luau, checks types with pinned Roblox definitions and runs mocked-service regression
+cases. None runs Roblox physics or verifies live purchases. Inspect Script Analysis and Output in
 Studio; use Test and Server & Clients (at least two clients for replicated changes).
 Use device emulation for UI/input. Record unavailable checks honestly.
 

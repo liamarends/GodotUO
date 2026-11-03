@@ -7,6 +7,9 @@ description: "Run or plan Roblox Studio Script Analysis, playtests, multi-client
 
 Read docs/roblox-workflow.md and the acceptance criteria. Run only relevant checks.
 1. Verify source formatting and Rojo build. Report these as static/assembly checks.
+   Run `python roblox/tests/run.py` for the house game's receipt, inventory and
+   activation regression cases; Luau and luau-compile must be on PATH. These use
+   service doubles, not live purchases. Follow roblox/TESTING.md for game criteria.
 2. If Studio is available, open the correct local/test place. Inspect Script Analysis
    and Output. Run Test; check both server and client views.
 3. For replicated behavior, use Server & Clients with at least two clients.
