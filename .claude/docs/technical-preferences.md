@@ -1,87 +1,27 @@
-# Technical Preferences
+# Technical preferences — Roblox Studio
 
-<!-- Populated by /setup-engine. Updated as the user makes decisions throughout development. -->
-<!-- All agents reference this file for project-specific standards and conventions. -->
-
-## Engine & Language
-
-- **Engine**: [TO BE CONFIGURED — run /setup-engine]
-- **Language**: [TO BE CONFIGURED]
-- **Rendering**: [TO BE CONFIGURED]
-- **Physics**: [TO BE CONFIGURED]
-
-## Input & Platform
-
-<!-- Written by /setup-engine. Read by /ux-design, /ux-review, /test-setup, /team-ui, and /dev-story -->
-<!-- to scope interaction specs, test helpers, and implementation to the correct input methods. -->
-
-- **Target Platforms**: [TO BE CONFIGURED — e.g., PC, Console, Mobile, Web]
-- **Input Methods**: [TO BE CONFIGURED — e.g., Keyboard/Mouse, Gamepad, Touch, Mixed]
-- **Primary Input**: [TO BE CONFIGURED — the dominant input for this game]
-- **Gamepad Support**: [TO BE CONFIGURED — Full / Partial / None]
-- **Touch Support**: [TO BE CONFIGURED — Full / Partial / None]
-- **Platform Notes**: [TO BE CONFIGURED — any platform-specific UX constraints]
-
-## Naming Conventions
-
-- **Classes**: [TO BE CONFIGURED]
-- **Variables**: [TO BE CONFIGURED]
-- **Signals/Events**: [TO BE CONFIGURED]
-- **Files**: [TO BE CONFIGURED]
-- **Scenes/Prefabs**: [TO BE CONFIGURED]
-- **Constants**: [TO BE CONFIGURED]
-
-## Performance Budgets
-
-- **Target Framerate**: [TO BE CONFIGURED]
-- **Frame Budget**: [TO BE CONFIGURED]
-- **Draw Calls**: [TO BE CONFIGURED]
-- **Memory Ceiling**: [TO BE CONFIGURED]
-
-## Testing
-
-- **Framework**: [TO BE CONFIGURED]
-- **Minimum Coverage**: [TO BE CONFIGURED]
-- **Required Tests**: Balance formulas, gameplay systems, networking (if applicable)
-
-## Forbidden Patterns
-
-<!-- Add patterns that should never appear in this project's codebase -->
-- [None configured yet — add as architectural decisions are made]
-
-## Allowed Libraries / Addons
-
-<!-- Add approved third-party dependencies here -->
-- [None configured yet — add as dependencies are approved]
-
-## Architecture Decisions Log
-
-<!-- Quick reference linking to full ADRs in docs/architecture/ -->
-- [No ADRs yet — use /architecture-decision to create one]
-
-## Engine Specialists
-
-<!-- Written by /setup-engine when engine is configured. -->
-<!-- Read by /code-review, /architecture-decision, /architecture-review, and team skills -->
-<!-- to know which specialist to spawn for engine-specific validation. -->
-
-- **Primary**: [TO BE CONFIGURED — run /setup-engine]
-- **Language/Code Specialist**: [TO BE CONFIGURED]
-- **Shader Specialist**: [TO BE CONFIGURED]
-- **UI Specialist**: [TO BE CONFIGURED]
-- **Additional Specialists**: [TO BE CONFIGURED]
-- **Routing Notes**: [TO BE CONFIGURED]
-
-### File Extension Routing
-
-<!-- Skills use this table to select the right specialist per file type. -->
-<!-- If a row says [TO BE CONFIGURED], fall back to Primary for that file type. -->
-
-| File Extension / Type | Specialist to Spawn |
-|-----------------------|---------------------|
-| Game code (primary language) | [TO BE CONFIGURED] |
-| Shader / material files | [TO BE CONFIGURED] |
-| UI / screen files | [TO BE CONFIGURED] |
-| Scene / prefab / level files | [TO BE CONFIGURED] |
-| Native extension / plugin files | [TO BE CONFIGURED] |
-| General architecture review | Primary |
+- **Engine**: Roblox Studio. Studio updates separately; record its version in test evidence.
+- **Language**: Luau with strict type checking for new code.
+- **Source**: roblox/src/server, client and shared; service mapping in roblox/default.project.json.
+- **Sync/build**: Rojo 7.7.1, optional Studio plugin from the same release.
+- **Formatter**: StyLua 2.6.0 with Luau syntax, roblox/stylua.toml.
+- **Version source**: roblox/tool-versions.json; update its versions/digests and CI together.
+- **Physics/rendering**: Roblox engine services and Instances; no Godot shaders or .NET runtime.
+- **Input**: Design for keyboard/mouse and touch; verify gamepad if included by the feature.
+  No claim of device support until tested.
+- **Authority**: Server owns shared game rules and saved state. Shared modules are client-readable.
+- **Persistence**: Inventory.luau owns a versioned per-user DataStore, atomic receipt
+  grants and write-through mutations. No external persistence library. Keep the
+  Studio memory demo and separate test experience isolated from live player data.
+- **Dependencies**: No gameplay framework selected. Do not add Knit, networking wrappers
+  or a datastore package merely to satisfy a template.
+- **Naming**: PascalCase ModuleScript names; descriptive camelCase locals/functions;
+  Rojo .server.luau / .client.luau entry points; existing public APIs take precedence.
+- **Performance**: Measure before assigning budgets. Test client and server costs separately,
+  including low-end/mobile targets when in scope. No invented FPS or memory claims.
+- **Testing**: Script Analysis, Test, Server & Clients, device emulation;
+  targeted tests in roblox/tests/run.py. CI checks setup, formatting, compilation,
+  Roblox-aware types, mocked-service regressions and assembly; never platform playtests.
+- **Specialists**: roblox-studio-specialist, roblox-server-engineer,
+  roblox-client-ui-engineer, roblox-qa and lead-programmer.
+- **Documentation**: docs/roblox-workflow.md. Historical Godot ADRs do not govern Roblox design.

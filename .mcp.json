@@ -1,9 +1,1 @@
-{
-  "mcpServers": {
-    "guoasset": {
-      "type": "stdio",
-      "command": "dotnet",
-      "args": ["build/guoasset/bin/GUO.AssetMcp/release/guoasset.dll"]
-    }
-  }
-}
+{"mcpServers": {}}

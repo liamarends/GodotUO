@@ -1,0 +1,49 @@
+{
+  "id": "game.interaction.smoke",
+  "version": 1,
+  "status": "SPECIFICATION - requires project adapter",
+  "requires": [
+    "studio",
+    "player-input",
+    "server-observation",
+    "video"
+  ],
+  "fixture": {
+    "name": "isolated-smoke",
+    "seed": 42
+  },
+  "clients": 1,
+  "deadline_s": 120,
+  "steps": [
+    {
+      "id": "spawn",
+      "action": "start-test",
+      "expect": "character alive in spawn region",
+      "timeout_s": 30
+    },
+    {
+      "id": "move",
+      "action": "hold-forward-then-release",
+      "expect": "player moved and stops after release",
+      "timeout_s": 10
+    },
+    {
+      "id": "interact",
+      "action": "activate visible interaction",
+      "expect": "server increments test objective once; HUD agrees",
+      "timeout_s": 10
+    },
+    {
+      "id": "reset",
+      "action": "reset character",
+      "expect": "respawn and controls work without duplicate HUD",
+      "timeout_s": 30
+    }
+  ],
+  "cleanup": [
+    "release-input",
+    "end-owned-session",
+    "finalize-recording",
+    "write-result"
+  ]
+}

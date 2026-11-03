@@ -7,6 +7,7 @@ elsewhere a relative symlink.
 
     python tools/agent_skills/run.py           # create or repair the link
     python tools/agent_skills/run.py --check   # validate the skills and the link, change nothing
+    python tools/agent_skills/run.py --validate-only  # CI: manifests only, no link needed
     python tools/agent_skills/run.py --remove  # remove the link only
 """
 import argparse
@@ -36,6 +37,10 @@ def points_at_source(path):
 def validate():
     """Every skill folder has a SKILL.md whose front matter names it and describes it (Agent Skills format)."""
     problems = []
+    if not SOURCE.is_dir():
+        return ["skills directory is missing: .claude/skills"]
+    if not any(p.is_dir() for p in SOURCE.iterdir()):
+        return ["skills directory contains no skills"]
     for folder in sorted(p for p in SOURCE.iterdir() if p.is_dir()):
         skill = folder / "SKILL.md"
         if not skill.is_file():
@@ -50,7 +55,8 @@ def validate():
             problems.append(f"{folder.name}: front matter name does not match the folder")
         elif not NAME.match(folder.name) or len(folder.name) > 64:
             problems.append(f"{folder.name}: name must be lowercase letters, digits and single hyphens, at most 64")
-        if not re.search(r"^description:\s*\S", match.group(1), re.M):
+        description = re.search(r"^description:[ \t]*(.*)$", match.group(1), re.M)
+        if not description or not description.group(1).strip().strip("\"'").strip():
             problems.append(f"{folder.name}: no description")
     return problems
 
@@ -72,14 +78,16 @@ def remove_link():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--check", action="store_true", help="validate the skills and report the link; change nothing")
-    parser.add_argument("--remove", action="store_true", help="remove the link only")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--check", action="store_true", help="validate skills and require a working link; change nothing")
+    mode.add_argument("--validate-only", action="store_true", help="validate skill manifests without requiring or creating a link")
+    mode.add_argument("--remove", action="store_true", help="remove the link only")
     args = parser.parse_args()
 
     problems = validate()
     for problem in problems:
         print(f"[agent_skills] {problem}")
-    count = sum(1 for p in SOURCE.iterdir() if p.is_dir())
+    count = sum(1 for p in SOURCE.iterdir() if p.is_dir()) if SOURCE.is_dir() else 0
 
     if args.remove:
         if is_link(LINK):
@@ -87,9 +95,15 @@ def main():
             print("[agent_skills] link removed")
         return 1 if problems else 0
     if args.check:
-        state = "linked" if points_at_source(LINK) else "not linked (Codex will not see the skills; run without --check)"
+        linked = points_at_source(LINK)
+        state = "linked" if linked else "not linked (run without --check to configure Codex discovery)"
         print(f"[agent_skills] {count} skills, {len(problems)} problems; .agents/skills {state}")
-        return 1 if problems else 0
+        return int(bool(problems) or not linked)
+    if args.validate_only:
+        print(f"[agent_skills] {count} skills, {len(problems)} problems (manifests only)")
+        return int(bool(problems))
+    if problems:
+        return 1  # Do not expose an incomplete or invalid collection.
 
     if points_at_source(LINK):
         print(f"[agent_skills] .agents/skills already links to .claude/skills ({count} skills)")

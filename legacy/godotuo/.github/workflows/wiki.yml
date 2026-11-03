@@ -23,6 +23,8 @@ concurrency:
 
 jobs:
   publish:
+    # Create the fork's first Wiki page before opting in.
+    if: vars.GUO_ENABLE_WIKI == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

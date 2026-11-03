@@ -44,6 +44,7 @@ env:
 
 jobs:
   export:
+    if: vars.GUO_ENABLE_RELEASES == 'true'
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -151,6 +152,7 @@ jobs:
 
 
   android:
+    if: vars.GUO_ENABLE_RELEASES == 'true'
     runs-on: windows-latest
     timeout-minutes: 60
     steps:

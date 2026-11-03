@@ -148,6 +148,13 @@ __pycache__/
 node_modules/
 
 # === Archives =============================================================
+# Roblox generated places and Studio recovery/lock files. Source remains in roblox/.
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+*.rbxl.autosave
+*.rbxlx.autosave
 *.zip
 *.tar.gz
 *.rar

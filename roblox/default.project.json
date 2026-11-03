@@ -1,0 +1,29 @@
+{
+  "name": "DontWakeTheHouse",
+  "serveAddress": "127.0.0.1",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "FilteringEnabled": true
+      }
+    }
+  }
+}

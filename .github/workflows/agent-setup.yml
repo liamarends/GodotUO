@@ -1,0 +1,63 @@
+name: agent-setup
+
+on:
+  push:
+    branches: [main, integration, "work/**"]
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "tools/agent_skills/**"
+      - "tools/roblox_workflow/**"
+      - "docs/roblox-agent-kit.md"
+      - "reference/roblox-agent-workflow-kit/**"
+      - "docs/fork-workflow.md"
+      - "docs/roblox-workflow.md"
+      - "README.md"
+      - ".github/workflows/agent-setup.yml"
+  pull_request:
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "tools/agent_skills/**"
+      - "tools/roblox_workflow/**"
+      - "docs/roblox-agent-kit.md"
+      - "reference/roblox-agent-workflow-kit/**"
+      - "docs/fork-workflow.md"
+      - "docs/roblox-workflow.md"
+      - "README.md"
+      - ".github/workflows/agent-setup.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-setup-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discovery:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate canonical skills without local setup
+        run: python tools/agent_skills/run.py --validate-only
+      - name: Test discovery and preservation of existing folders
+        run: python -m unittest discover -s tools/agent_skills -p "test_*.py"
+      - name: Test workflow evidence helpers
+        run: python -m unittest discover -s tools/roblox_workflow -p "test_*.py"
+      - name: Create and verify Codex skill discovery
+        run: |
+          python tools/agent_skills/run.py
+          python tools/agent_skills/run.py --check
+      - name: Check fork documentation links
+        run: python tools/docs_lint/run.py AGENTS.md CLAUDE.md README.md docs/fork-workflow.md docs/roblox-workflow.md docs/roblox-agent-kit.md roblox/README.md roblox/TESTING.md tools/agent_skills/README.md .claude/agents .claude/skills
