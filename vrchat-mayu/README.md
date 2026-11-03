@@ -27,3 +27,7 @@ The body map adds blue wrist markings, paired chest spots and ivory lower feet. 
 Unity 2022.3.22f1 and VRChat Avatars SDK 3.10.3 completed the Windows build and SDK validation. In batch mode the SDK performance tables needed `AvatarPerformanceStats.Initialize()` before validation. Two outfit materials, Underwear and Cute Hoodie V2, needed Poiyomi locking before export.
 
 The verified output is `Builds/Windows/Mayu Blue.vrca`. It contains 40,893,309 bytes on disk and 216,903,804 bytes of uncompressed UnityFS block data. Both are below the published PC limits. A byte-identical copy was installed in VRChat's local test-avatar folder under the name **Mayu Blue**. In-client motion, expressions and outfit toggles still need a wear test. Online publication is a separate step. [VRChat avatar size limits](https://creators.vrchat.com/avatars/avatar-size-limits/)
+
+## Add-on wheel
+
+The separate `Assets/Mayu Blue - Wheel.unity` scene includes the fitted accessories, outfits, optional hair and props. The guide lists their menu locations, including automatically generated **Next** pages. [Expressions wheel setup and item paths](expressions-wheel.md)
