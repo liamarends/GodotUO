@@ -37,3 +37,13 @@ The before/after check counts **suspected visible inner-thigh poke-through pixel
 Across 616 garment/pose/view combinations, the final PC export had 99.48% fewer flags. All seven garments recorded zero flags in the standing pose. A second check that allowed up to 50 mm of depth separation counted 30,941 flags before and 740 after. Comfy Pants still recorded 53 flags across the three reserved poses, up from 12, despite the large reduction across all eleven poses. In the full-material comparison, the loose Comfy waistband also shows a little space at the sides.
 
 The final export passed the clothing wheel on/off checks. The motion tests use the normal Windows avatar. Live IK, standalone Quest, overlapping outfits, and every possible body slider combination remain outside these measurements. For an in-client check, take a stride and a shallow squat in Comfy Pants, then try Baggy Sweats with one knee lifted. Compare the inner seams and the shorts hems from front and three-quarter views.
+
+## Waist silhouette correction
+
+The earlier fit in the table above produced pinches visible above the Blu shorts, Baggy Sweats and Comfy Pants. The combined clothing shape moved some waist vertices by approximately 10–12 cm. Looking only at pixels where skin appeared through cloth had rewarded an unnatural waist.
+
+The current fitted PC scene keeps the original waist and upper hip positions when a clothing toggle switches on. The influence fades into the inner thigh below the hip joints. Each individual garment’s total neutral-pose adjustment is capped at 12 mm, including the older fit baked into its shape. All seven shapes in the exported mesh measured 0 mm movement in the protected region. The clothing wheel round-trip test passed. A front and elevated-view comparison against the PC bundle built just before the reported screenshots showed the waist filling the bands again.
+
+This changes the clipping tradeoff. The same 616 geometric comparisons now flag 19,372 inner-thigh pixel samples, compared with 28,026 in the original baseline and 145 in the superseded, over-compressed fit. Bent poses can still show skin through fabric. The current change affects the normal body fit only. The shorts retain their original pale distressed edge. A separate simulation of up to 4 mm of garment-panel expansion offered a modest improvement and was left out of the saved scene.
+
+The linked tutorial’s pants section starts at 3:47, with the clipping demonstration at 4:32 and a pose test at 5:05. For Mayu, verify both the clothed leg and the exposed waist while cycling the relevant switch. [Rexouium clothing tutorial, pants clipping chapter](https://www.youtube.com/watch?v=RQRJN5fGFjs&t=272s)
