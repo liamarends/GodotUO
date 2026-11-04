@@ -22,3 +22,18 @@ The fitted PC scene uses separate meshes for its seven pants and shorts. Each ga
 The test compares eleven poses, including standing, crouching, crossing and spreading the legs, lifting either knee, and taking asymmetric strides. It samples eight camera angles per garment and pose. The contour refinement used eight poses. The two asymmetric strides and the shallow squat were reserved from that refinement to check how the fit transfers to different movements.
 
 The before/after check counts **suspected visible inner-thigh poke-through pixels**, summed across all views at a fixed 150 × 180 resolution. A flagged pixel requires fabric on the same side of the avatar, visible skin 1–25 mm in front of that fabric, and compatible surface directions. This geometric test cannot identify a transparent opening painted into a garment’s texture. Inspect original-material previews alongside it. The counts express how often the sampled views flag an overlap. They cannot establish a universal clipping rate in VRChat.
+
+| Garment | Previous PC export | Final PC export | Reserved poses, previous → final |
+| --- | ---: | ---: | ---: |
+| AD Nightwear Shorts | 352 | 6 | 108 → 6 |
+| Comfy Pants | 4,204 | 55 | 12 → 53 |
+| Blu Shortshorts | 3,153 | 2 | 204 → 0 |
+| DNO Tech Pants | 185 | 41 | 37 → 37 |
+| Soft Lounge Shorts | 7,069 | 10 | 393 → 6 |
+| SoftBoy Baggy Sweats | 8,922 | 23 | 666 → 5 |
+| Thrift Baggy Pants | 4,141 | 8 | 9 → 0 |
+| **Total** | **28,026** | **145** | **1,429 → 107** |
+
+Across 616 garment/pose/view combinations, the final PC export had 99.48% fewer flags. All seven garments recorded zero flags in the standing pose. A second check that allowed up to 50 mm of depth separation counted 30,941 flags before and 740 after. Comfy Pants still recorded 53 flags across the three reserved poses, up from 12, despite the large reduction across all eleven poses. In the full-material comparison, the loose Comfy waistband also shows a little space at the sides.
+
+The final export passed the clothing wheel on/off checks. The motion tests use the normal Windows avatar. Live IK, standalone Quest, overlapping outfits, and every possible body slider combination remain outside these measurements. For an in-client check, take a stride and a shallow squat in Comfy Pants, then try Baggy Sweats with one knee lifted. Compare the inner seams and the shorts hems from front and three-quarter views.
