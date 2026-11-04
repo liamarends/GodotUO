@@ -1,0 +1,23 @@
+# Fitted Mayu checks
+
+These notes describe the Windows build of the fitted Mayu scene. The Unity editor's scene visibility settings only affect the editor preview. To check what other users can see, load the exported avatar and exercise its FX animator with the expression parameters from its generated wheel.
+
+## An unequipped muzzle
+
+The head strap uses blendshapes to hide its strap and muzzle guard. In the earlier export its skinned renderer was enabled with both controls off. Gate the renderer on the logical OR of the existing Equipped and Muzzle Guard controls. Check five states in the exported avatar: neither, equipped only, both, guard only, then neither again. The renderer should be off, on, on, on, off. This tests the attachment itself; a screenshot alone cannot establish the identity of every floating object.
+
+## Cake PB during a jump
+
+On the fitted avatar the original main momentum was 0.964, the secondary inertia momentum was 0.9, and both pulls were 0.05. The fitted scene uses main pull/momentum/stiffness of 0.35/0.34/0.32 and secondary values of 0.40/0.22/0.40. Both use world-motion damping at 1. The main stretch and squish limits are 0.08 and 0.15.
+
+In an isolated Unity Play Mode comparison, two copies of the same avatar went through the same half-meter jump. We tracked 24 transforms on each rig. The maximum displacement relative to the avatar was 0.0848 m with the original settings and 0.00020 m with the fitted settings. This checks a vertical jump, not every possible IK pose or contact. World-motion damping targets locomotion while retaining motion from the skeleton. [VRChat PhysBones documentation](https://creators.vrchat.com/common-components/physbones/)
+
+## Earrings and handheld props
+
+Fit accessory anchors to the surface and skeleton that actually ship on the avatar. The Gothic cross earrings and pointy piercings now follow the fitted ear bones, and the crosses retain their secondary chains. Choose a point on the glass neck for the handheld prop, then solve the parent-constraint offset separately for each palm. Validate both sources in the export by rotating each wrist and checking that the grip follows it.
+
+## Inner-thigh clearance
+
+Measure each garment separately. Include shorts, because their exposed skin must still be visible below the hem. Skin both meshes in the same coordinate system and compare the body surface to the fabric along rays from the corresponding leg. A skin-colored pixel in front of pants is not sufficient evidence of clipping: the nearer leg may legitimately hide part of the farther garment.
+
+The normal body has a separate correction for Comfy Pants, AD Nightwear Shorts, DNO Tech Pants, Blu Shortshorts, Thrift Baggy Pants, Soft Lounge Shorts, and SoftBoy Baggy Sweats. Check against standing and crouched poses. Also verify each control on the actual exported FX controller: an edit to a nested prefab's managed-reference list can appear correct in the editor but fail to drive the correction in a build.
