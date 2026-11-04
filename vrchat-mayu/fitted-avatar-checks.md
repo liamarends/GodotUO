@@ -24,3 +24,11 @@ The normal body has a separate correction for Comfy Pants, AD Nightwear Shorts, 
 
 
 A centerline clearance test missed inner-thigh clipping visible in VRChat. For the Windows normal body, use a separate UV coverage channel for each garment, driven by its wheel control. Compare the body and fabric from multiple angles at two elevations, reject hits from the opposite leg, and sample again after hiding the first layer of exposed skin. Check the mask with the normal and oil body materials because the FX controller can swap materials after a rebind. The desktop shader is specific to the Windows build.
+
+## Wheel switches that stay on
+
+The fitted Windows build submitted before the November 4 fix switched Baggy Sweats on but left its mesh visible when the expression parameter returned to zero. The same issue affected Emo Hair, piercings, glasses, material swaps, and other wheel items. Inspect the finished controller, including layers added after VRCFury processes the avatar. The existing states used Write Defaults on, while the custom head-strap states used Write Defaults off. Match the custom states to the controller and give garment visibility an explicit off clip. [VRCFury's Write Defaults guide](https://vrcfury.com/broken-wd/)
+
+Verify each wheel switch on the exported avatar by recording the original state, switching on, switching off, then comparing against the original. The corrected PC build restored all 117 switches that produced a measurable change in the FX test. Three bong switches had animated exits and passed when allowed to finish. The sweep also encountered 54 controls with no observable change or a zero-valued selector and 54 outside the FX controller. Those need an appropriate input, playable layer, or in-client test.
+
+The coverage mask must also have a physical boundary on the body mesh. A painted texture alone hid parts of the waist and toes on Baggy Sweats. Store thigh eligibility per vertex and use it in the clothing shader before sampling the garment mask. In the corrected PC build, four full-body on/off comparisons found no removed pixels above the hip or below the knee. Remaining close body/fabric intersections in the inner-thigh diagnostic are a separate fit check.
