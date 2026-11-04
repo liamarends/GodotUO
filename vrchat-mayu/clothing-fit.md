@@ -47,3 +47,7 @@ The current fitted PC scene keeps the original waist and upper hip positions whe
 This changes the clipping tradeoff. The same 616 geometric comparisons now flag 19,372 inner-thigh pixel samples, compared with 28,026 in the original baseline and 145 in the superseded, over-compressed fit. Bent poses can still show skin through fabric. The current change affects the normal body fit only. The shorts retain their original pale distressed edge. A separate simulation of up to 4 mm of garment-panel expansion offered a modest improvement and was left out of the saved scene.
 
 The linked tutorial’s pants section starts at 3:47, with the clipping demonstration at 4:32 and a pose test at 5:05. For Mayu, verify both the clothed leg and the exposed waist while cycling the relevant switch. [Rexouium clothing tutorial, pants clipping chapter](https://www.youtube.com/watch?v=RQRJN5fGFjs&t=272s)
+
+## Original Comfy Pants and SoftBoy Baggy Sweats
+
+The fitted scene now uses the original `[S]OutfitFBX.fbx` Pants mesh and `softboymayu.fbx` Baggy Sweats mesh. The two wheel switches still control garment visibility. Their two custom body-fit shapes have zero vertex displacement. The earlier clipping measurements for these garments describe superseded versions. Existing clipping in an original garment can still occur when it is worn. The other 362 body shapes and the five other garment mesh assignments matched the pre-restore backup.
