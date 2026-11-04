@@ -14,10 +14,13 @@ In an isolated Unity Play Mode comparison, two copies of the same avatar went th
 
 ## Earrings and handheld props
 
-Fit accessory anchors to the surface and skeleton that actually ship on the avatar. The Gothic cross earrings and pointy piercings now follow the fitted ear bones, and the crosses retain their secondary chains. Choose a point on the glass neck for the handheld prop, then solve the parent-constraint offset separately for each palm. Validate both sources in the export by rotating each wrist and checking that the grip follows it.
+Fit accessory anchors to the surface and skeleton that actually ship on the avatar. A single ear joint passed an earlier hierarchy check but placed the earrings incorrectly in VRChat. For each cross and stud group, sample the weights and bind poses at its own ear-rim attachment point. Use the same coordinate frame as the body renderer. Rotate the actual ear bones and measure how far the jewelry mount moves relative to that point. In the fitted Unity scene the maximum measured separation change was under 0.5 mm. Inspect the front, side, and tilted views as a separate check of placement. Choose a point on the glass neck for the handheld prop, then solve the parent-constraint offset separately for each palm. Validate both sources in the export by rotating each wrist and checking that the grip follows it.
 
 ## Inner-thigh clearance
 
 Measure each garment separately. Include shorts, because their exposed skin must still be visible below the hem. Skin both meshes in the same coordinate system and compare the body surface to the fabric along rays from the corresponding leg. A skin-colored pixel in front of pants is not sufficient evidence of clipping: the nearer leg may legitimately hide part of the farther garment.
 
 The normal body has a separate correction for Comfy Pants, AD Nightwear Shorts, DNO Tech Pants, Blu Shortshorts, Thrift Baggy Pants, Soft Lounge Shorts, and SoftBoy Baggy Sweats. Check against standing and crouched poses. Also verify each control on the actual exported FX controller: an edit to a nested prefab's managed-reference list can appear correct in the editor but fail to drive the correction in a build.
+
+
+A centerline clearance test missed inner-thigh clipping visible in VRChat. For the Windows normal body, use a separate UV coverage channel for each garment, driven by its wheel control. Compare the body and fabric from multiple angles at two elevations, reject hits from the opposite leg, and sample again after hiding the first layer of exposed skin. Check the mask with the normal and oil body materials because the FX controller can swap materials after a rebind. The desktop shader is specific to the Windows build.
