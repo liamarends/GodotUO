@@ -48,16 +48,26 @@ This changes the clipping tradeoff. The same 616 geometric comparisons now flag 
 
 The linked tutorial’s pants section starts at 3:47, with the clipping demonstration at 4:32 and a pose test at 5:05. For Mayu, verify both the clothed leg and the exposed waist while cycling the relevant switch. [Rexouium clothing tutorial, pants clipping chapter](https://www.youtube.com/watch?v=RQRJN5fGFjs&t=272s)
 
-## Original Comfy Pants and SoftBoy Baggy Sweats
+## Original Comfy Pants and SoftBoy Baggy Sweats — restoration baseline
 
-The fitted scene now uses the original `[S]OutfitFBX.fbx` Pants mesh and `softboymayu.fbx` Baggy Sweats mesh. The two wheel switches still control garment visibility. Their two custom body-fit shapes have zero vertex displacement. The earlier clipping measurements for these garments describe superseded versions. Existing clipping in an original garment can still occur when it is worn. The other 362 body shapes and the five other garment mesh assignments matched the pre-restore backup.
+Before the conservative correction below, the fitted scene used the original `[S]OutfitFBX.fbx` Pants mesh and `softboymayu.fbx` Baggy Sweats mesh. The two wheel switches still control garment visibility. Their two custom body-fit shapes have zero vertex displacement. The earlier clipping measurements for these garments describe superseded versions. Existing clipping in an original garment can still occur when it is worn. The other 362 body shapes and the five other garment mesh assignments matched the pre-restore backup.
 
-## Conservative PC candidate, 2026-11-04
+## Final conservative PC clothing repair, 2026-11-04
 
-After the user limited further Quest work, a separate PC candidate was built from the restored fitted scene. The original fitted scene remains the baseline. The candidate is saved locally at `Assets/Mayu Wheel Fit/PC Clothing Candidate/Mayu Blue - Clothing Candidate.unity`.
+The tested candidate has been promoted into `Assets/Mayu Blue - Wheel Fitted.unity`. The prior disk scene, unsaved editor scene, and Windows bundle were backed up before promotion. The existing avatar blueprint and private listing were preserved. The SDK Builder is open for the user's manual **Build & Publish**; this repair has not been uploaded.
 
-Eleven garment meshes received small corrections. The exported body measured 0 mm change across all 25 garment cases and five poses per case. Maximum garment movement was 6.00005 mm, within floating-point tolerance of the 6 mm cap. Triangle order and skinning matrices matched the original. The SDK build, all 25 garment on/off round trips, and four independent top/pants combinations passed.
+Eleven garment meshes received small corrections. The exported body measured **0 mm change** across all 25 garment cases and five poses per case. Maximum garment movement was 6.00005 mm, within floating-point tolerance of the **6 mm cap**. The eleven saved garment meshes retain their triangle indices and skinning matrices. Original-material previews show the front inner-thigh patches cleared on Comfy Pants and SoftBoy Baggy Sweats in the sampled view. The body shape and overall clothing silhouette were preserved.
 
-Original-material previews showed the front inner-thigh patches cleared on Comfy Pants and SoftBoy Baggy Sweats in the sampled view. A visible patch remains near the Comfy Pants cuff with a bent knee. This candidate is incomplete and has not been promoted to the fitted scene or uploaded. Geometric overlap reductions should not be read as proof that every clothing combination is fixed.
+The SDK build, all 25 garment on/off round trips, and four independent top/pants combinations passed. Source validation initially required the SDK's Read/Write, Legacy Blendshape Normals, and Streaming Mip Maps import fixes. Import metadata was backed up before those SDK-provided fixes were applied; validation and the rebuilt export then passed. The normals import changed the unmodified Thrift CropTop's vertex deduplication from 5,450 to 5,432 vertices. Comparing canonicalized triangle corners verified the same triangle surfaces and skinning matrices in all five poses, despite changed index ordering.
 
-A separate cuff-weight-transfer experiment preserved the neutral coordinates in its offline calculation and limited motion changes to 11.8 mm across eleven poses. It was not applied to the saved candidate. Its Unity visual test remains unverified because the editor-control tool began timing out before the updated helper was loaded. The earlier image named `pcweights outfits.png` used the previous helper and does not validate the weight-transfer experiment.
+### Correction to the cuff diagnosis
+
+The previously reported Comfy Pants cuff patch is an opening in the **original mesh**, not a new hole from the fitting corrections. Ray tests at the visible patch found no covering fabric triangle; boundary inspection confirmed all six original boundary loops and identical original/candidate triangle indices. Those original openings were retained to preserve the garment design. A separate cuff-weight-transfer experiment was visually tested and discarded; it is not in the promoted scene.
+
+### Limits and publishing state
+
+These tests cover five poses per clothing case, the exported toggle round trips, and four independent outfit combinations. They do not prove zero clipping for every live IK movement, overlapping outfit, or body-slider combination. The SDK still reports Very Poor performance and PhysBone cyclic-dependency warnings; the Build & Publish button is enabled. The clothing repair does not address those separate warnings.
+
+Local evidence is under `Mayu patch verification/PC clothing candidate 2026-11-04`, including exported geometry verification, toggle/photo logs, the actual-material comparison, the tested bundle, and pre-promotion backups. The fitted scene and Windows bundle hashes match the verified candidate copies.
+
+Quest work remains set aside at the user's request. Its saved candidate was not promoted or uploaded.
