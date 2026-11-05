@@ -51,3 +51,13 @@ The linked tutorial’s pants section starts at 3:47, with the clipping demonstr
 ## Original Comfy Pants and SoftBoy Baggy Sweats
 
 The fitted scene now uses the original `[S]OutfitFBX.fbx` Pants mesh and `softboymayu.fbx` Baggy Sweats mesh. The two wheel switches still control garment visibility. Their two custom body-fit shapes have zero vertex displacement. The earlier clipping measurements for these garments describe superseded versions. Existing clipping in an original garment can still occur when it is worn. The other 362 body shapes and the five other garment mesh assignments matched the pre-restore backup.
+
+## Conservative PC candidate, 2026-11-04
+
+After the user limited further Quest work, a separate PC candidate was built from the restored fitted scene. The original fitted scene remains the baseline. The candidate is saved locally at `Assets/Mayu Wheel Fit/PC Clothing Candidate/Mayu Blue - Clothing Candidate.unity`.
+
+Eleven garment meshes received small corrections. The exported body measured 0 mm change across all 25 garment cases and five poses per case. Maximum garment movement was 6.00005 mm, within floating-point tolerance of the 6 mm cap. Triangle order and skinning matrices matched the original. The SDK build, all 25 garment on/off round trips, and four independent top/pants combinations passed.
+
+Original-material previews showed the front inner-thigh patches cleared on Comfy Pants and SoftBoy Baggy Sweats in the sampled view. A visible patch remains near the Comfy Pants cuff with a bent knee. This candidate is incomplete and has not been promoted to the fitted scene or uploaded. Geometric overlap reductions should not be read as proof that every clothing combination is fixed.
+
+A separate cuff-weight-transfer experiment preserved the neutral coordinates in its offline calculation and limited motion changes to 11.8 mm across eleven poses. It was not applied to the saved candidate. Its Unity visual test remains unverified because the editor-control tool began timing out before the updated helper was loaded. The earlier image named `pcweights outfits.png` used the previous helper and does not validate the weight-transfer experiment.
