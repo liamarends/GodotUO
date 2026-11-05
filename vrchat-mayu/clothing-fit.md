@@ -71,3 +71,16 @@ These tests cover five poses per clothing case, the exported toggle round trips,
 Local evidence is under `Mayu patch verification/PC clothing candidate 2026-11-04`, including exported geometry verification, toggle/photo logs, the actual-material comparison, the tested bundle, and pre-promotion backups. The fitted scene and Windows bundle hashes match the verified candidate copies.
 
 Quest work remains set aside at the user's request. Its saved candidate was not promoted or uploaded.
+
+
+## Paw palette, alternate speech, and fur shading — 2026-11-04
+
+The fitted PC scene now uses dusty pink `#D58FA8` hand/foot pads and warm ivory `#E9DDC7` claws. Poiyomi's RGBA color masking reuses the avatar's existing Shine map (red: pads, green: claws). The original blue-and-cream albedo texture was not repainted. Preserve the alpha-channel normal-map configuration when adding these masks, and refresh texture keywords before compiling a locked material.
+
+The alternate body has a dedicated 15-state FX speech controller driven by VRChat's global `Viseme` integer. Every state writes all 15 mouth shapes, and Unity Playables tests passed all states plus returns to silence. The expression-link renderer reference was also checked and explicitly serialized. An SDK export containing the speech/color changes passed before the final material-only shading correction. Live microphone behavior still needs an in-client check.
+
+The hard exterior fur patch came from sampling the shadow maps at the tiny constant-color UV swatch. An added UV channel projects the normal body's shadow coordinates onto the alternate patch while leaving geometry, skinning, base albedo UVs, and detail-color UVs unchanged. The mirrored atlas needs a consistent UV half to avoid interpolation across unrelated islands. The adjacent detail material uses those same shadow coordinates while retaining its original color texture and UV channel.
+
+A material clone must be saved as an asset before unlocking/recompiling its optimized shader. An unsaved clone can retain the source's compiled constants even when its displayed properties change. Explicitly checking unlock success and recompiling the saved material removed the remaining pale border in the same-lighting preview. The normal and alternate body previews now show the same blue-and-cream palette. Their different geometry still produces different natural shadows.
+
+Backups, source helper, speech verification and before/after previews are saved locally under `Mayu patch verification/Pink pads and speech`. The earlier test bundle predates the final material correction; rebuild from the saved fitted scene for upload. No upload was performed.
